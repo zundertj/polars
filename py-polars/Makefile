@@ -16,7 +16,7 @@ release-install: release-build pip
 
 test:
 	maturin develop
-	python -m pytest --cov polars
+	pytest tests --cov polars
 
 test-build:
 	maturin build -o wheels
@@ -24,4 +24,4 @@ test-build:
 test-install: test-build pip
 
 build-and-test: test-install
-	python -m pytest --cov polars
+	pytest tests --cov polars
