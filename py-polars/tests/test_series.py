@@ -60,8 +60,8 @@ def test_to_frame():
 def test_bitwise_ops():
     a = pl.Series([True, False, True])
     b = pl.Series([False, True, True])
-    assert a & b == [False, False, True]
-    assert a | b == [True, True, True]
+    assert (a & b).to_list() == [False, False, True]
+    assert (a | b).to_list() == [True, True, True]
 
 
 def test_equality():
@@ -241,7 +241,7 @@ def test_ufunc():
     a = pl.Series("a", [1.0, 2.0, 3.0, 4.0])
     b = np.multiply(a, 4)
     assert isinstance(b, pl.Series)
-    assert b == [4, 8, 12, 16]
+    assert b.to_list() == [4, 8, 12, 16]
 
     # test if null bitmask is preserved
     a = pl.Series("a", [1.0, None, 3.0])
@@ -259,6 +259,7 @@ def test_set():
     a = pl.Series("a", [True, False, True])
     mask = pl.Series("msk", [True, False, True])
     a[mask] = False
+    assert a.to_list() == [False, False, False]
 
 
 def test_fill_null():
@@ -350,12 +351,11 @@ def test_shape():
     assert s.shape == (3,)
 
 
+@pytest.mark.skip(reason="may Segfault: see https://github.com/pola-rs/polars/issues/518")
 def test_create_list_series():
-    pass
-    # may Segfault: see https://github.com/pola-rs/polars/issues/518
-    # a = [[1, 2], None, [None, 3]]
-    # s = pl.Series("", a)
-    # assert s.to_list() == a
+    a = [[1, 2], None, [None, 3]]
+    s = pl.Series("", a)
+    assert s.to_list() == a
 
 
 def test_iter():
@@ -401,10 +401,10 @@ def test_is_in():
     s = pl.Series([1, 2, 3])
 
     out = s.is_in([1, 2])
-    assert out == [True, True, False]
+    assert out.to_list() == [True, True, False]
     df = pl.DataFrame({"a": [1.0, 2.0], "b": [1, 4]})
 
-    assert df[pl.col("a").is_in(pl.col("b")).alias("mask")]["mask"] == [True, False]
+    assert df[pl.col("a").is_in(pl.col("b")).alias("mask")]["mask"].to_list() == [True, False]
 
 
 def test_str_slice():
@@ -439,20 +439,20 @@ def test_strftime():
 def test_round():
     a = pl.Series("f", [1.003, 2.003])
     b = a.round(2)
-    assert b == [1.00, 2.00]
+    assert b.to_list() == [1.00, 2.00]
 
 
 def test_apply_list_out():
     s = pl.Series("count", [3, 2, 2])
     out = s.apply(lambda val: pl.repeat(val, val))
-    assert out[0] == [3, 3, 3]
-    assert out[1] == [2, 2]
-    assert out[2] == [2, 2]
+    assert out[0].to_list() == [3, 3, 3]
+    assert out[1].to_list() == [2, 2]
+    assert out[2].to_list() == [2, 2]
 
 
 def test_is_first():
     s = pl.Series("", [1, 1, 2])
-    assert s.is_first() == [True, False, True]
+    assert s.is_first().to_list() == [True, False, True]
 
 
 def test_reinterpret():
@@ -471,7 +471,6 @@ def test_mode():
 
 def test_jsonpath_single():
     s = pl.Series(['{"a":"1"}', None, '{"a":2}', '{"a":2.1}', '{"a":true}'])
-    print(s.str.json_path_match("$.a"))
     assert s.str.json_path_match("$.a").to_list() == [
         "1",
         None,
@@ -502,7 +501,7 @@ def test_rank_dispatch():
     assert list(s.rank("dense")) == [2, 3, 4, 3, 3, 4, 1]
 
     df = pl.DataFrame([s])
-    df.select(pl.col("a").rank("dense"))["a"] == [2, 3, 4, 3, 3, 4, 1]
+    assert df.select(pl.col("a").rank("dense"))["a"].to_list() == [2, 3, 4, 3, 3, 4, 1]
 
 
 def test_diff_dispatch():
@@ -627,17 +626,17 @@ def test_bitwise():
             (pl.col("a") ^ pl.col("b")).alias("xor"),
         ]
     )
-    out["and"].to_list() == [1, 0, 1]
-    out["or"].to_list() == [3, 6, 7]
-    out["xor"].to_list() == [2, 6, 6]
+    assert out["and"].to_list() == [1, 0, 1]
+    assert out["or"].to_list() == [3, 6, 7]
+    assert out["xor"].to_list() == [2, 6, 6]
 
 
 def test_to_numpy():
     pl.eager.series._PYARROW_AVAILABLE = False
     a = pl.Series("a", [1, 2, 3])
-    a.to_numpy() == np.array([1, 2, 3])
+    np.testing.assert_array_equal(a.to_numpy(), np.array([1, 2, 3]))
     a = pl.Series("a", [1, 2, None])
-    a.to_numpy() == np.array([1.0, 2.0, np.nan])
+    np.testing.assert_array_equal(a.to_numpy(), np.array([1.0, 2.0, np.nan]))
 
 
 def test_from_sequences():
