@@ -301,107 +301,64 @@ class Series:
     def __rxor__(self, other: "Series") -> "Series":
         return self.__xor__(other)
 
-    def __eq__(self, other: Any) -> "Series":  # type: ignore[override]
+    def _op_comp(self, op: str, other: Any) -> "Series":
         if isinstance(other, Sequence) and not isinstance(other, str):
             other = Series("", other)
         if isinstance(other, Series):
-            return Series._from_pyseries(self._s.eq(other._s))
+            return Series._from_pyseries(getattr(self._s, op)(other._s))
         other = _maybe_cast(other, self.dtype)
-        f = get_ffi_func("eq_<>", self.dtype, self._s)
+        f = get_ffi_func(op + "_<>", self.dtype, self._s)
         if f is None:
             return NotImplemented
-        return wrap_s(f(other))
+        return Series._from_pyseries(f(other))
+
+    def _op_arithmetic(self, op: str, other: Any, rhs: bool = False) -> "Series":
+        if isinstance(other, Series):
+            return Series._from_pyseries(getattr(self._s, op)(other._s))
+        other = _maybe_cast(other, self.dtype)
+        dtype = date_like_to_physical(self.dtype)
+
+        op_str = op + "_<>"
+        if rhs:
+            op_str += "_rhs"
+
+        f = get_ffi_func(op_str, dtype, self._s)
+        if f is None:
+            return NotImplemented
+        return Series._from_pyseries(f(other))
+
+    def __eq__(self, other: Any) -> "Series":  # type: ignore[override]
+        return self._op_comp("eq", other)
 
     def __ne__(self, other: Any) -> "Series":  # type: ignore[override]
-        if isinstance(other, Sequence) and not isinstance(other, str):
-            other = Series("", other)
-        if isinstance(other, Series):
-            return Series._from_pyseries(self._s.neq(other._s))
-        other = _maybe_cast(other, self.dtype)
-        f = get_ffi_func("neq_<>", self.dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_comp("neq", other)
 
     def __gt__(self, other: Any) -> "Series":
-        if isinstance(other, Sequence) and not isinstance(other, str):
-            other = Series("", other)
-        if isinstance(other, Series):
-            return Series._from_pyseries(self._s.gt(other._s))
-        other = _maybe_cast(other, self.dtype)
-        f = get_ffi_func("gt_<>", self.dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_comp("gt", other)
 
     def __lt__(self, other: Any) -> "Series":
-        if isinstance(other, Sequence) and not isinstance(other, str):
-            other = Series("", other)
-        if isinstance(other, Series):
-            return Series._from_pyseries(self._s.lt(other._s))
-        # cast other if it doesn't match
-        other = _maybe_cast(other, self.dtype)
-        f = get_ffi_func("lt_<>", self.dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_comp("lt", other)
 
     def __ge__(self, other: Any) -> "Series":
-        if isinstance(other, Sequence) and not isinstance(other, str):
-            other = Series("", other)
-        if isinstance(other, Series):
-            return Series._from_pyseries(self._s.gt_eq(other._s))
-        other = _maybe_cast(other, self.dtype)
-        f = get_ffi_func("gt_eq_<>", self.dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_comp("gt_eq", other)
 
     def __le__(self, other: Any) -> "Series":
-        if isinstance(other, Sequence) and not isinstance(other, str):
-            other = Series("", other)
-        if isinstance(other, Series):
-            return Series._from_pyseries(self._s.lt_eq(other._s))
-        other = _maybe_cast(other, self.dtype)
-        f = get_ffi_func("lt_eq_<>", self.dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_comp("lt_eq", other)
 
     def __add__(self, other: Any) -> "Series":
         if isinstance(other, str):
             other = Series("", [other])
-        if isinstance(other, Series):
-            return wrap_s(self._s.add(other._s))
-        other = _maybe_cast(other, self.dtype)
-        dtype = date_like_to_physical(self.dtype)
-        f = get_ffi_func("add_<>", dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_arithmetic("add", other)
 
     def __sub__(self, other: Any) -> "Series":
-        if isinstance(other, Series):
-            return Series._from_pyseries(self._s.sub(other._s))
-        other = _maybe_cast(other, self.dtype)
-        dtype = date_like_to_physical(self.dtype)
-        f = get_ffi_func("sub_<>", dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_arithmetic("sub", other)
 
     def __truediv__(self, other: Any) -> "Series":
         physical_type = date_like_to_physical(self.dtype)
 
         # this branch is exactly the floordiv function without rounding the floats
         if self.is_float():
-            if isinstance(other, Series):
-                return Series._from_pyseries(self._s.div(other._s))
-
-            other = _maybe_cast(other, self.dtype)
-            dtype = date_like_to_physical(self.dtype)
-            f = get_ffi_func("div_<>", dtype, self._s)
-            return wrap_s(f(other))
+            return self._op_arithmetic("div", other)
 
         if self.dtype != physical_type:
             return self.__floordiv__(other)
@@ -421,56 +378,19 @@ class Series:
         return wrap_s(f(other))
 
     def __mul__(self, other: Any) -> "Series":
-        if isinstance(other, Series):
-            return Series._from_pyseries(self._s.mul(other._s))
-        other = _maybe_cast(other, self.dtype)
-        dtype = date_like_to_physical(self.dtype)
-        f = get_ffi_func("mul_<>", dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_arithmetic("mul", other)
 
     def __mod__(self, other: Any) -> "Series":
-        if isinstance(other, Series):
-            return Series._from_pyseries(self._s.rem(other._s))
-        other = _maybe_cast(other, self.dtype)
-        dtype = date_like_to_physical(self.dtype)
-        f = get_ffi_func("rem_<>", dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_arithmetic("rem", other)
 
     def __rmod__(self, other: Any) -> "Series":
-        if isinstance(other, Series):
-            return Series._from_pyseries(other._s.rem(self._s))
-        dtype = date_like_to_physical(self.dtype)
-        other = _maybe_cast(other, self.dtype)
-        other = match_dtype(other, dtype)
-        f = get_ffi_func("rem_<>_rhs", dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_arithmetic("rem", other, rhs=True)
 
     def __radd__(self, other: Any) -> "Series":
-        if isinstance(other, Series):
-            return Series._from_pyseries(self._s.add(other._s))
-        dtype = date_like_to_physical(self.dtype)
-        other = _maybe_cast(other, self.dtype)
-        other = match_dtype(other, dtype)
-        f = get_ffi_func("add_<>_rhs", dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_arithmetic("add", other, rhs=True)
 
     def __rsub__(self, other: Any) -> "Series":
-        if isinstance(other, Series):
-            return Series._from_pyseries(other._s.sub(self._s))
-        dtype = date_like_to_physical(self.dtype)
-        other = match_dtype(other, dtype)
-        f = get_ffi_func("sub_<>_rhs", dtype, self._s)
-        if f is None:
-            return NotImplemented
-        return wrap_s(f(other))
+        return self._op_arithmetic("sub", other, rhs=True)
 
     def __invert__(self) -> "Series":
         if self.dtype == Boolean:
