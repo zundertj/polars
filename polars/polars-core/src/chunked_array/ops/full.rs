@@ -1,6 +1,8 @@
 use crate::chunked_array::builder::get_list_builder;
 use crate::prelude::*;
 use crate::utils::NoNull;
+use arrow::bitmap::MutableBitmap;
+use polars_arrow::array::default_arrays::FromData;
 
 impl<T> ChunkFull<T::Native> for ChunkedArray<T>
 where
@@ -21,24 +23,22 @@ where
     T: PolarsNumericType,
 {
     fn full_null(name: &str, length: usize) -> Self {
-        let mut ca = (0..length).map(|_| None).collect::<Self>();
-        ca.rename(name);
-        ca
+        let arr = new_null_array(T::get_dtype().to_arrow(), length).into();
+        ChunkedArray::new_from_chunks(name, vec![arr])
     }
 }
 impl ChunkFull<bool> for BooleanChunked {
     fn full(name: &str, value: bool, length: usize) -> Self {
-        let mut ca = (0..length).map(|_| value).collect::<BooleanChunked>();
-        ca.rename(name);
-        ca
+        let mut bits = MutableBitmap::with_capacity(length);
+        bits.extend_constant(length, value);
+        (name, BooleanArray::from_data_default(bits.into(), None)).into()
     }
 }
 
 impl ChunkFullNull for BooleanChunked {
     fn full_null(name: &str, length: usize) -> Self {
-        let mut ca = (0..length).map(|_| None).collect::<Self>();
-        ca.rename(name);
-        ca
+        let arr = new_null_array(DataType::Boolean.to_arrow(), length).into();
+        BooleanChunked::new_from_chunks(name, vec![arr])
     }
 }
 
@@ -55,11 +55,8 @@ impl<'a> ChunkFull<&'a str> for Utf8Chunked {
 
 impl ChunkFullNull for Utf8Chunked {
     fn full_null(name: &str, length: usize) -> Self {
-        let mut ca = (0..length)
-            .map::<Option<String>, _>(|_| None)
-            .collect::<Self>();
-        ca.rename(name);
-        ca
+        let arr = new_null_array(DataType::Utf8.to_arrow(), length).into();
+        Utf8Chunked::new_from_chunks(name, vec![arr])
     }
 }
 
@@ -75,11 +72,7 @@ impl ChunkFull<&Series> for ListChunked {
 
 impl ChunkFullNull for ListChunked {
     fn full_null(name: &str, length: usize) -> ListChunked {
-        let mut builder = ListBooleanChunkedBuilder::new(name, length, 0);
-        for _ in 0..length {
-            builder.append_null();
-        }
-        builder.finish()
+        ListChunked::full_null_with_dtype(name, length, &DataType::Boolean)
     }
 }
 
@@ -95,12 +88,21 @@ impl ChunkFullNull for CategoricalChunked {
 }
 
 impl ListChunked {
-    pub(crate) fn full_null_with_dtype(name: &str, length: usize, dt: &DataType) -> ListChunked {
-        let mut builder = get_list_builder(dt, 0, length, name);
-        for _ in 0..length {
-            builder.append_null();
-        }
-        builder.finish()
+    pub(crate) fn full_null_with_dtype(
+        name: &str,
+        length: usize,
+        inner_dtype: &DataType,
+    ) -> ListChunked {
+        let arr = new_null_array(
+            ArrowDataType::List(Box::new(ArrowField::new(
+                "item",
+                inner_dtype.to_arrow(),
+                true,
+            ))),
+            length,
+        )
+        .into();
+        ListChunked::new_from_chunks(name, vec![arr])
     }
 }
 

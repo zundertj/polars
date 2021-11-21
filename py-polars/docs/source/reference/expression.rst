@@ -11,9 +11,10 @@ These functions can be used as expression and sometimes also in eager contexts.
 .. autosummary::
    :toctree: api/
 
+   select
    col
    count
-   to_list
+   list
    std
    var
    max
@@ -45,6 +46,8 @@ These functions can be used as expression and sometimes also in eager contexts.
    format
    when
    exclude
+   datetime
+   date
 
 Constructor
 -----------
@@ -176,6 +179,8 @@ Manipulation/ selection
     Expr.interpolate
     Expr.argsort
     Expr.clip
+    Expr.lower_bound
+    Expr.upper_bound
     Expr.str_concat
 
 Column names

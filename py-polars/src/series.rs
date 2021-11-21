@@ -588,11 +588,11 @@ impl PySeries {
         }
     }
     pub fn eq(&self, rhs: &PySeries) -> PyResult<Self> {
-        Ok(Self::new(self.series.eq(&rhs.series).into_series()))
+        Ok(Self::new(self.series.equal(&rhs.series).into_series()))
     }
 
     pub fn neq(&self, rhs: &PySeries) -> PyResult<Self> {
-        Ok(Self::new(self.series.neq(&rhs.series).into_series()))
+        Ok(Self::new(self.series.not_equal(&rhs.series).into_series()))
     }
 
     pub fn gt(&self, rhs: &PySeries) -> PyResult<Self> {
@@ -630,26 +630,24 @@ impl PySeries {
 
         let series = &self.series;
 
-        let primitive_to_list = |dt: &DataType, series: &Series| {
-            match dt {
-                DataType::Boolean => PyList::new(python, series.bool().unwrap()),
-                DataType::Utf8 => PyList::new(python, series.utf8().unwrap()),
-                DataType::UInt8 => PyList::new(python, series.u8().unwrap()),
-                DataType::UInt16 => PyList::new(python, series.u16().unwrap()),
-                DataType::UInt32 => PyList::new(python, series.u32().unwrap()),
-                DataType::UInt64 => PyList::new(python, series.u64().unwrap()),
-                DataType::Int8 => PyList::new(python, series.i8().unwrap()),
-                DataType::Int16 => PyList::new(python, series.i16().unwrap()),
-                DataType::Int32 => PyList::new(python, series.i32().unwrap()),
-                DataType::Int64 => PyList::new(python, series.i64().unwrap()),
-                DataType::Float32 => PyList::new(python, series.f32().unwrap()),
-                DataType::Float64 => PyList::new(python, series.f64().unwrap()),
-                dt => panic!("to_list() not implemented for {:?}", dt)
-            }
+        let primitive_to_list = |dt: &DataType, series: &Series| match dt {
+            DataType::Boolean => PyList::new(python, series.bool().unwrap()),
+            DataType::Utf8 => PyList::new(python, series.utf8().unwrap()),
+            DataType::UInt8 => PyList::new(python, series.u8().unwrap()),
+            DataType::UInt16 => PyList::new(python, series.u16().unwrap()),
+            DataType::UInt32 => PyList::new(python, series.u32().unwrap()),
+            DataType::UInt64 => PyList::new(python, series.u64().unwrap()),
+            DataType::Int8 => PyList::new(python, series.i8().unwrap()),
+            DataType::Int16 => PyList::new(python, series.i16().unwrap()),
+            DataType::Int32 => PyList::new(python, series.i32().unwrap()),
+            DataType::Int64 => PyList::new(python, series.i64().unwrap()),
+            DataType::Float32 => PyList::new(python, series.f32().unwrap()),
+            DataType::Float64 => PyList::new(python, series.f64().unwrap()),
+            dt => panic!("to_list() not implemented for {:?}", dt),
         };
 
         let pylist = match series.dtype() {
-            DataType::Categorical => PyList::new(python, series.categorical().unwrap()),
+            DataType::Categorical => PyList::new(python, series.categorical().unwrap().iter_str()),
             DataType::Object(_) => {
                 let v = PyList::empty(python);
                 for i in 0..series.len() {
@@ -678,7 +676,7 @@ impl PySeries {
             }
             DataType::Date => PyList::new(python, &series.date().unwrap().0),
             DataType::Datetime => PyList::new(python, &series.datetime().unwrap().0),
-            dt => primitive_to_list(dt, series)
+            dt => primitive_to_list(dt, series),
         };
         pylist.to_object(python)
     }
@@ -1345,6 +1343,11 @@ impl PySeries {
         let out = out.map_err(PyPolarsEr::from)?;
         Ok(out.into())
     }
+
+    pub fn abs(&self) -> PyResult<Self> {
+        let out = self.series.abs().map_err(PyPolarsEr::from)?;
+        Ok(out.into())
+    }
 }
 
 macro_rules! impl_ufuncs {
@@ -1631,7 +1634,7 @@ macro_rules! impl_eq_num {
         #[pymethods]
         impl PySeries {
             pub fn $name(&self, rhs: $type) -> PyResult<PySeries> {
-                Ok(PySeries::new(self.series.eq(rhs).into_series()))
+                Ok(PySeries::new(self.series.equal(rhs).into_series()))
             }
         }
     };
@@ -1655,7 +1658,7 @@ macro_rules! impl_neq_num {
         #[pymethods]
         impl PySeries {
             pub fn $name(&self, rhs: $type) -> PyResult<PySeries> {
-                Ok(PySeries::new(self.series.neq(rhs).into_series()))
+                Ok(PySeries::new(self.series.not_equal(rhs).into_series()))
             }
         }
     };

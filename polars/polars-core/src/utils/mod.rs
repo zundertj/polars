@@ -1,3 +1,5 @@
+pub(crate) mod series;
+
 use crate::prelude::*;
 use crate::POOL;
 pub use arrow;
@@ -461,7 +463,7 @@ macro_rules! static_zip {
 
 #[macro_export]
 macro_rules! df {
-    ($($col_name:expr => $slice:expr), +) => {
+    ($($col_name:expr => $slice:expr), + $(,)?) => {
         {
             DataFrame::new(vec![$(Series::new($col_name, $slice),)+])
         }
@@ -878,4 +880,53 @@ pub(crate) fn index_to_chunked_index<
 #[inline]
 pub(crate) unsafe fn copy_from_slice_unchecked<T>(src: &[T], dst: &mut [T]) {
     std::ptr::copy_nonoverlapping(src.as_ptr(), dst.as_mut_ptr(), dst.len());
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_align_chunks() {
+        let a = Int32Chunked::new_from_slice("", &[1, 2, 3, 4]);
+        let mut b = Int32Chunked::new_from_slice("", &[1]);
+        let b2 = Int32Chunked::new_from_slice("", &[2, 3, 4]);
+
+        b.append(&b2);
+        let (a, b) = align_chunks_binary(&a, &b);
+        assert_eq!(
+            a.chunk_id().collect::<Vec<_>>(),
+            b.chunk_id().collect::<Vec<_>>()
+        );
+
+        let a = Int32Chunked::new_from_slice("", &[1, 2, 3, 4]);
+        let mut b = Int32Chunked::new_from_slice("", &[1]);
+        let b1 = b.clone();
+        b.append(&b1);
+        b.append(&b1);
+        b.append(&b1);
+        let (a, b) = align_chunks_binary(&a, &b);
+        assert_eq!(
+            a.chunk_id().collect::<Vec<_>>(),
+            b.chunk_id().collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn test_df_macro_trailing_commas() -> Result<()> {
+        let a = df! {
+            "a" => &["a one", "a two"],
+            "b" => &["b one", "b two"],
+            "c" => &[1, 2]
+        }?;
+
+        let b = df! {
+            "a" => &["a one", "a two"],
+            "b" => &["b one", "b two"],
+            "c" => &[1, 2],
+        }?;
+
+        assert!(a.frame_equal(&b));
+        Ok(())
+    }
 }
