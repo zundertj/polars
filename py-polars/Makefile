@@ -22,7 +22,7 @@ test:
 test-build:
 	maturin build -o wheels
 
-test-install: test-build # pip
+test-install: test-build pip
 
 build-and-test: test-install
 	pytest tests --cov=polars
