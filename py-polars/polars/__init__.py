@@ -11,6 +11,7 @@ except ImportError as e:
     # this is only useful for documentation
     warnings.warn("polars binary missing!")
 
+from polars import polars
 from polars.cfg import (  # flake8: noqa. We do not export in __all__
     Config,
     toggle_string_cache,
