@@ -3,7 +3,7 @@ import warnings
 
 try:
     from polars.polars import version
-except ImportError as e:
+except ImportError as e:  # pragma: no cover
 
     def version() -> str:
         return ""
@@ -205,3 +205,6 @@ __all__ = [
 ]
 
 __version__ = version()
+import os
+
+os.environ["POLARS_ALLOW_EXTENSION"] = "true"
