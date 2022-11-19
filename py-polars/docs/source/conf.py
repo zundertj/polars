@@ -91,6 +91,7 @@ numpydoc_show_class_members = False
 
 html_theme_options = {
     "external_links": [
+        {"name": "API reference", "url": "reference/index.html"},
         {
             "name": "User Guide",
             "url": "https://pola-rs.github.io/polars-book/user-guide/index.html",
