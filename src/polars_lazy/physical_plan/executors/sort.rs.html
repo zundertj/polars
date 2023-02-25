@@ -106,7 +106,7 @@
 
         df.sort_impl(
             by_columns,
-            std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.args.reverse),
+            std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.args.descending),
             <span class="self">self</span>.args.nulls_last,
             <span class="self">self</span>.args.slice,
             <span class="bool-val">true</span>,

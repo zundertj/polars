@@ -1240,13 +1240,13 @@
     </span><span class="kw">fn </span>sort_with(<span class="kw-2">&amp;</span><span class="self">self</span>, options: SortOptions) -&gt; ChunkedArray&lt;T&gt;;
 
     <span class="doccomment">/// Returned a sorted `ChunkedArray`.
-    </span><span class="kw">fn </span>sort(<span class="kw-2">&amp;</span><span class="self">self</span>, reverse: bool) -&gt; ChunkedArray&lt;T&gt;;
+    </span><span class="kw">fn </span>sort(<span class="kw-2">&amp;</span><span class="self">self</span>, descending: bool) -&gt; ChunkedArray&lt;T&gt;;
 
     <span class="doccomment">/// Retrieve the indexes needed to sort this array.
     </span><span class="kw">fn </span>arg_sort(<span class="kw-2">&amp;</span><span class="self">self</span>, options: SortOptions) -&gt; IdxCa;
 
     <span class="doccomment">/// Retrieve the indexes need to sort this and the other arrays.
-    </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, _other: <span class="kw-2">&amp;</span>[Series], _reverse: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
+    </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, _other: <span class="kw-2">&amp;</span>[Series], _descending: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
         <span class="prelude-val">Err</span>(PolarsError::InvalidOperation(
             <span class="string">&quot;arg_sort_multiple not implemented for this dtype&quot;</span>.into(),
         ))

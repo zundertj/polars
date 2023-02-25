@@ -471,6 +471,10 @@
 <a href="#471" id="471">471</a>
 <a href="#472" id="472">472</a>
 <a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::fmt;
 <span class="kw">use </span>std::fmt::{Debug, Display, Formatter};
@@ -779,8 +783,12 @@
                 <span class="bool-val">true </span>=&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{expr:?} DESC&quot;</span>),
                 <span class="bool-val">false </span>=&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{expr:?} ASC&quot;</span>),
             },
-            SortBy { expr, by, reverse } =&gt; {
-                <span class="macro">write!</span>(f, <span class="string">&quot;SORT {expr:?} BY {by:?} REVERSE ORDERING {reverse:?}&quot;</span>,)
+            SortBy {
+                expr,
+                by,
+                descending,
+            } =&gt; {
+                <span class="macro">write!</span>(f, <span class="string">&quot;SORT {expr:?} BY {by:?} REVERSE ORDERING {descending:?}&quot;</span>,)
             }
             Filter { input, by } =&gt; {
                 <span class="macro">write!</span>(f, <span class="string">&quot;{input:?}\nFILTER WHERE {by:?}&quot;</span>)

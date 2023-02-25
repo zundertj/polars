@@ -275,6 +275,8 @@
 <a href="#275" id="275">275</a>
 <a href="#276" id="276">276</a>
 <a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::sync::atomic::{AtomicBool, Ordering};
 <span class="kw">use </span>std::sync::Arc;
 
@@ -290,7 +292,7 @@
 <span class="kw">pub struct </span>SortByExpr {
     <span class="kw">pub</span>(<span class="kw">crate</span>) input: Arc&lt;<span class="kw">dyn </span>PhysicalExpr&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) by: Vec&lt;Arc&lt;<span class="kw">dyn </span>PhysicalExpr&gt;&gt;,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) reverse: Vec&lt;bool&gt;,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) descending: Vec&lt;bool&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) expr: Expr,
 }
 
@@ -298,26 +300,26 @@
     <span class="kw">pub fn </span>new(
         input: Arc&lt;<span class="kw">dyn </span>PhysicalExpr&gt;,
         by: Vec&lt;Arc&lt;<span class="kw">dyn </span>PhysicalExpr&gt;&gt;,
-        reverse: Vec&lt;bool&gt;,
+        descending: Vec&lt;bool&gt;,
         expr: Expr,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             input,
             by,
-            reverse,
+            descending,
             expr,
         }
     }
 }
 
-<span class="kw">fn </span>prepare_reverse(reverse: <span class="kw-2">&amp;</span>[bool], by_len: usize) -&gt; Vec&lt;bool&gt; {
-    <span class="kw">match </span>(reverse.len(), by_len) {
+<span class="kw">fn </span>prepare_descending(descending: <span class="kw-2">&amp;</span>[bool], by_len: usize) -&gt; Vec&lt;bool&gt; {
+    <span class="kw">match </span>(descending.len(), by_len) {
         <span class="comment">// equal length
-        </span>(n_reverse, n) <span class="kw">if </span>n_reverse == n =&gt; reverse.to_vec(),
+        </span>(n_rdescending, n) <span class="kw">if </span>n_rdescending == n =&gt; descending.to_vec(),
         <span class="comment">// none given all false
         </span>(<span class="number">0</span>, n) =&gt; <span class="macro">vec!</span>[<span class="bool-val">false</span>; n],
         <span class="comment">// broadcast first
-        </span>(<span class="kw">_</span>, n) =&gt; <span class="macro">vec!</span>[reverse[<span class="number">0</span>]; n],
+        </span>(<span class="kw">_</span>, n) =&gt; <span class="macro">vec!</span>[descending[<span class="number">0</span>]; n],
     }
 }
 
@@ -327,13 +329,13 @@
     }
     <span class="kw">fn </span>evaluate(<span class="kw-2">&amp;</span><span class="self">self</span>, df: <span class="kw-2">&amp;</span>DataFrame, state: <span class="kw-2">&amp;</span>ExecutionState) -&gt; PolarsResult&lt;Series&gt; {
         <span class="kw">let </span>series_f = || <span class="self">self</span>.input.evaluate(df, state);
-        <span class="kw">let </span>reverse = prepare_reverse(<span class="kw-2">&amp;</span><span class="self">self</span>.reverse, <span class="self">self</span>.by.len());
+        <span class="kw">let </span>descending = prepare_descending(<span class="kw-2">&amp;</span><span class="self">self</span>.descending, <span class="self">self</span>.by.len());
 
         <span class="kw">let </span>(series, sorted_idx) = <span class="kw">if </span><span class="self">self</span>.by.len() == <span class="number">1 </span>{
             <span class="kw">let </span>sorted_idx_f = || {
                 <span class="kw">let </span>s_sort_by = <span class="self">self</span>.by[<span class="number">0</span>].evaluate(df, state)<span class="question-mark">?</span>;
                 <span class="prelude-val">Ok</span>(s_sort_by.arg_sort(SortOptions {
-                    descending: reverse[<span class="number">0</span>],
+                    descending: descending[<span class="number">0</span>],
                     ..Default::default()
                 }))
             };
@@ -346,7 +348,7 @@
                     .map(|e| e.evaluate(df, state))
                     .collect::&lt;PolarsResult&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;()<span class="question-mark">?</span>;
 
-                s_sort_by[<span class="number">0</span>].arg_sort_multiple(<span class="kw-2">&amp;</span>s_sort_by[<span class="number">1</span>..], <span class="kw-2">&amp;</span>reverse)
+                s_sort_by[<span class="number">0</span>].arg_sort_multiple(<span class="kw-2">&amp;</span>s_sort_by[<span class="number">1</span>..], <span class="kw-2">&amp;</span>descending)
             };
             POOL.install(|| rayon::join(series_f, sorted_idx_f))
         };
@@ -391,7 +393,7 @@
             <span class="kw">let </span>s = ac_in.aggregated();
             <span class="kw">let </span><span class="kw-2">mut </span>s = s.list().unwrap().clone();
 
-            <span class="kw">let </span>descending = <span class="self">self</span>.reverse[<span class="number">0</span>];
+            <span class="kw">let </span>descending = <span class="self">self</span>.descending[<span class="number">0</span>];
             <span class="kw">let </span><span class="kw-2">mut </span>ca: ListChunked = s
                 .par_iter_indexed()
                 .zip(sort_by.par_iter_indexed())
@@ -416,7 +418,7 @@
             ac_in.with_series(s, <span class="bool-val">true</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.expr))<span class="question-mark">?</span>;
             <span class="prelude-val">Ok</span>(ac_in)
         } <span class="kw">else </span>{
-            <span class="kw">let </span>reverse = prepare_reverse(<span class="kw-2">&amp;</span><span class="self">self</span>.reverse, <span class="self">self</span>.by.len());
+            <span class="kw">let </span>descending = prepare_descending(<span class="kw-2">&amp;</span><span class="self">self</span>.descending, <span class="self">self</span>.by.len());
 
             <span class="kw">let </span>(groups, ordered_by_group_operation) = <span class="kw">if </span><span class="self">self</span>.by.len() == <span class="number">1 </span>{
                 <span class="kw">let </span><span class="kw-2">mut </span>ac_sort_by = <span class="self">self</span>.by[<span class="number">0</span>].evaluate_on_groups(df, groups, state)<span class="question-mark">?</span>;
@@ -446,7 +448,7 @@
                                 };
 
                                 <span class="kw">let </span>sorted_idx = group.arg_sort(SortOptions {
-                                    descending: reverse[<span class="number">0</span>],
+                                    descending: descending[<span class="number">0</span>],
                                     ..Default::default()
                                 });
                                 map_sorted_indices_to_group_idx(<span class="kw-2">&amp;</span>sorted_idx, idx)
@@ -454,7 +456,7 @@
                             GroupsIndicator::Slice([first, len]) =&gt; {
                                 <span class="kw">let </span>group = sort_by_s.slice(first <span class="kw">as </span>i64, len <span class="kw">as </span>usize);
                                 <span class="kw">let </span>sorted_idx = group.arg_sort(SortOptions {
-                                    descending: reverse[<span class="number">0</span>],
+                                    descending: descending[<span class="number">0</span>],
                                     ..Default::default()
                                 });
                                 map_sorted_indices_to_group_slice(<span class="kw-2">&amp;</span>sorted_idx, first)
@@ -505,8 +507,9 @@
                                     })
                                     .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
 
-                                <span class="kw">let </span>sorted_idx =
-                                    groups[<span class="number">0</span>].arg_sort_multiple(<span class="kw-2">&amp;</span>groups[<span class="number">1</span>..], <span class="kw-2">&amp;</span>reverse).unwrap();
+                                <span class="kw">let </span>sorted_idx = groups[<span class="number">0</span>]
+                                    .arg_sort_multiple(<span class="kw-2">&amp;</span>groups[<span class="number">1</span>..], <span class="kw-2">&amp;</span>descending)
+                                    .unwrap();
                                 map_sorted_indices_to_group_idx(<span class="kw-2">&amp;</span>sorted_idx, idx)
                             }
                             GroupsIndicator::Slice([first, len]) =&gt; {
@@ -514,8 +517,9 @@
                                     .iter()
                                     .map(|s| s.slice(first <span class="kw">as </span>i64, len <span class="kw">as </span>usize))
                                     .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-                                <span class="kw">let </span>sorted_idx =
-                                    groups[<span class="number">0</span>].arg_sort_multiple(<span class="kw-2">&amp;</span>groups[<span class="number">1</span>..], <span class="kw-2">&amp;</span>reverse).unwrap();
+                                <span class="kw">let </span>sorted_idx = groups[<span class="number">0</span>]
+                                    .arg_sort_multiple(<span class="kw-2">&amp;</span>groups[<span class="number">1</span>..], <span class="kw-2">&amp;</span>descending)
+                                    .unwrap();
                                 map_sorted_indices_to_group_slice(<span class="kw-2">&amp;</span>sorted_idx, first)
                             }
                         };

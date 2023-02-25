@@ -610,6 +610,10 @@
 <a href="#610" id="610">610</a>
 <a href="#611" id="611">611</a>
 <a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
 </pre><pre class="rust"><code><span class="kw">use </span>polars_core::frame::groupby::GroupByMethod;
 <span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>polars_core::series::IsSorted;
@@ -726,13 +730,17 @@
                 expr: node_to_expr(expression, expr_arena),
             }))
         }
-        SortBy { expr, by, reverse } =&gt; {
+        SortBy {
+            expr,
+            by,
+            descending,
+        } =&gt; {
             <span class="kw">let </span>phys_expr = create_physical_expr(expr, ctxt, expr_arena, schema)<span class="question-mark">?</span>;
             <span class="kw">let </span>phys_by = create_physical_expressions(<span class="kw-2">&amp;</span>by, ctxt, expr_arena, schema)<span class="question-mark">?</span>;
             <span class="prelude-val">Ok</span>(Arc::new(SortByExpr::new(
                 phys_expr,
                 phys_by,
-                reverse,
+                descending,
                 node_to_expr(expression, expr_arena),
             )))
         }

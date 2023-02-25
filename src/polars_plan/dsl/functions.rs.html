@@ -1360,10 +1360,10 @@
 /// That means that the first `Series` will be used to determine the ordering
 /// until duplicates are found. Once duplicates are found, the next `Series` will
 /// be used and so on.
-</span><span class="kw">pub fn </span>arg_sort_by&lt;E: AsRef&lt;[Expr]&gt;&gt;(by: E, reverse: <span class="kw-2">&amp;</span>[bool]) -&gt; Expr {
-    <span class="kw">let </span>reverse = reverse.to_vec();
+</span><span class="kw">pub fn </span>arg_sort_by&lt;E: AsRef&lt;[Expr]&gt;&gt;(by: E, descending: <span class="kw-2">&amp;</span>[bool]) -&gt; Expr {
+    <span class="kw">let </span>descending = descending.to_vec();
     <span class="kw">let </span>function = SpecialEq::new(Arc::new(<span class="kw">move </span>|by: <span class="kw-2">&amp;mut </span>[Series]| {
-        polars_core::functions::arg_sort_by(by, <span class="kw-2">&amp;</span>reverse).map(|ca| <span class="prelude-val">Some</span>(ca.into_series()))
+        polars_core::functions::arg_sort_by(by, <span class="kw-2">&amp;</span>descending).map(|ca| <span class="prelude-val">Some</span>(ca.into_series()))
     }) <span class="kw">as </span>Arc&lt;<span class="kw">dyn </span>SeriesUdf&gt;);
 
     Expr::AnonymousFunction {

@@ -291,11 +291,11 @@ s.utf8()<span class="question-mark">?</span>.apply_cast_numeric::&lt;<span class
 <span class="comment">// sort this DataFrame by multiple columns
 
 // ordering of the columns
-</span><span class="kw">let </span>reverse = <span class="macro">vec!</span>[<span class="bool-val">true</span>, <span class="bool-val">false</span>];
+</span><span class="kw">let </span>descending = <span class="macro">vec!</span>[<span class="bool-val">true</span>, <span class="bool-val">false</span>];
 <span class="comment">// columns to sort by
 </span><span class="kw">let </span>by = <span class="kw-2">&amp;</span>[<span class="string">&quot;b&quot;</span>, <span class="string">&quot;a&quot;</span>];
 <span class="comment">// do the sort operation
-</span><span class="kw">let </span>sorted = df.sort(by, reverse)<span class="question-mark">?</span>;
+</span><span class="kw">let </span>sorted = df.sort(by, descending)<span class="question-mark">?</span>;
 
 <span class="comment">// sorted:
 

@@ -180,6 +180,8 @@
 <a href="#180" id="180">180</a>
 <a href="#181" id="181">181</a>
 <a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
 </pre><pre class="rust"><code><span class="kw">use super</span>::{private, IntoSeries, SeriesTrait, SeriesWrap, <span class="kw-2">*</span>};
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
@@ -284,7 +286,9 @@
     <span class="kw">unsafe fn </span>take_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: <span class="kw-2">&amp;</span>IdxCa) -&gt; PolarsResult&lt;Series&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>out = ChunkTake::take_unchecked(<span class="self">self</span>.<span class="number">0</span>.deref(), idx.into());
 
-        <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_flag() &amp;&amp; (idx.is_sorted_flag() || idx.is_sorted_reverse_flag()) {
+        <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_ascending_flag()
+            &amp;&amp; (idx.is_sorted_ascending_flag() || idx.is_sorted_descending_flag())
+        {
             out.set_sorted_flag(idx.is_sorted_flag2())
         }
 

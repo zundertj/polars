@@ -517,7 +517,7 @@
         }
         (IsSorted::Ascending, <span class="kw">_</span>) <span class="kw">if </span>is_numeric &amp;&amp; size_factor_rhs &lt; size_factor_acceptable =&gt; {
             <span class="kw">if </span>verbose {
-                <span class="macro">eprintln!</span>(<span class="string">&quot;right key will be reverse sorted in inner join operation.&quot;</span>)
+                <span class="macro">eprintln!</span>(<span class="string">&quot;right key will be descending sorted in inner join operation.&quot;</span>)
             }
 
             <span class="kw">let </span>sort_idx = s_right.arg_sort(SortOptions {
@@ -541,7 +541,7 @@
         }
         (<span class="kw">_</span>, IsSorted::Ascending) <span class="kw">if </span>is_numeric &amp;&amp; size_factor_lhs &lt; size_factor_acceptable =&gt; {
             <span class="kw">if </span>verbose {
-                <span class="macro">eprintln!</span>(<span class="string">&quot;left key will be reverse sorted in inner join operation.&quot;</span>)
+                <span class="macro">eprintln!</span>(<span class="string">&quot;left key will be descending sorted in inner join operation.&quot;</span>)
             }
 
             <span class="kw">let </span>sort_idx = s_left.arg_sort(SortOptions {
@@ -561,7 +561,7 @@
                 });
             });
 
-            <span class="comment">// set sorted to `false` as we reverse sorted the left key.
+            <span class="comment">// set sorted to `false` as we descending sorted the left key.
             </span>((left, right), <span class="bool-val">false</span>)
         }
         <span class="kw">_ </span>=&gt; s_left.hash_join_inner(s_right),

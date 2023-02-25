@@ -1108,6 +1108,14 @@
 <a href="#1108" id="1108">1108</a>
 <a href="#1109" id="1109">1109</a>
 <a href="#1110" id="1110">1110</a>
+<a href="#1111" id="1111">1111</a>
+<a href="#1112" id="1112">1112</a>
+<a href="#1113" id="1113">1113</a>
+<a href="#1114" id="1114">1114</a>
+<a href="#1115" id="1115">1115</a>
+<a href="#1116" id="1116">1116</a>
+<a href="#1117" id="1117">1117</a>
+<a href="#1118" id="1118">1118</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Type agnostic columnar data structure.
 </span><span class="kw">pub use </span><span class="kw">crate</span>::prelude::ChunkCompare;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
@@ -1324,9 +1332,9 @@
         <span class="prelude-val">Ok</span>(<span class="self">self</span>)
     }
 
-    <span class="kw">pub fn </span>sort(<span class="kw-2">&amp;</span><span class="self">self</span>, reverse: bool) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>sort(<span class="kw-2">&amp;</span><span class="self">self</span>, descending: bool) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.sort_with(SortOptions {
-            descending: reverse,
+            descending,
             ..Default::default()
         })
     }
@@ -1338,6 +1346,10 @@
 
     <span class="doccomment">/// Cast `[Series]` to another `[DataType]`
     </span><span class="kw">pub fn </span>cast(<span class="kw-2">&amp;</span><span class="self">self</span>, dtype: <span class="kw-2">&amp;</span>DataType) -&gt; PolarsResult&lt;<span class="self">Self</span>&gt; {
+        <span class="comment">// best leave as is.
+        </span><span class="kw">if </span><span class="macro">matches!</span>(dtype, DataType::Unknown) {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="self">self</span>.clone());
+        }
         <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.cast(dtype) {
             <span class="prelude-val">Ok</span>(out) =&gt; <span class="prelude-val">Ok</span>(out),
             <span class="prelude-val">Err</span>(err) =&gt; {
@@ -1797,12 +1809,16 @@
             <span class="kw">use </span>DataType::<span class="kw-2">*</span>;
             <span class="kw">match </span><span class="self">self</span>.dtype() {
                 Boolean =&gt; <span class="self">self</span>.cast(<span class="kw-2">&amp;</span>DataType::Int64).unwrap().product(),
-                Int8 | UInt8 | Int16 | UInt16 =&gt; {
+                Int8 | UInt8 | Int16 | UInt16 | Int32 | UInt32 =&gt; {
                     <span class="kw">let </span>s = <span class="self">self</span>.cast(<span class="kw-2">&amp;</span>Int64).unwrap();
                     s.product()
                 }
                 Int64 =&gt; {
                     <span class="kw">let </span>ca = <span class="self">self</span>.i64().unwrap();
+                    ca.prod_as_series()
+                }
+                UInt64 =&gt; {
+                    <span class="kw">let </span>ca = <span class="self">self</span>.u64().unwrap();
                     ca.prod_as_series()
                 }
                 Float32 =&gt; {

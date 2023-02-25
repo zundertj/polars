@@ -166,13 +166,13 @@
 <span class="kw">use </span><span class="kw">crate</span>::index::IdxSize;
 
 <span class="doccomment">/// Find partition indexes such that every partition contains unique groups.
-</span><span class="kw">fn </span>find_partition_points&lt;T&gt;(values: <span class="kw-2">&amp;</span>[T], n: usize, reverse: bool) -&gt; Vec&lt;usize&gt;
+</span><span class="kw">fn </span>find_partition_points&lt;T&gt;(values: <span class="kw-2">&amp;</span>[T], n: usize, descending: bool) -&gt; Vec&lt;usize&gt;
 <span class="kw">where
     </span>T: Debug + NativeType + PartialOrd,
 {
     <span class="kw">let </span>len = values.len();
     <span class="kw">if </span>n &gt; len {
-        <span class="kw">return </span>find_partition_points(values, len / <span class="number">2</span>, reverse);
+        <span class="kw">return </span>find_partition_points(values, len / <span class="number">2</span>, descending);
     }
     <span class="kw">if </span>n &lt; <span class="number">2 </span>{
         <span class="kw">return </span><span class="macro">vec!</span>[];
@@ -192,7 +192,7 @@
         </span><span class="kw">let </span>part = <span class="kw-2">&amp;</span>values[start_idx..end_idx];
 
         <span class="kw">let </span>latest_val = values[end_idx];
-        <span class="kw">let </span>idx = <span class="kw">if </span>reverse {
+        <span class="kw">let </span>idx = <span class="kw">if </span>descending {
             part.partition_point(|v| <span class="kw-2">*</span>v &gt; latest_val)
         } <span class="kw">else </span>{
             part.partition_point(|v| <span class="kw-2">*</span>v &lt; latest_val)
@@ -207,11 +207,11 @@
     partition_points
 }
 
-<span class="kw">pub fn </span>create_clean_partitions&lt;T&gt;(values: <span class="kw-2">&amp;</span>[T], n: usize, reverse: bool) -&gt; Vec&lt;<span class="kw-2">&amp;</span>[T]&gt;
+<span class="kw">pub fn </span>create_clean_partitions&lt;T&gt;(values: <span class="kw-2">&amp;</span>[T], n: usize, descending: bool) -&gt; Vec&lt;<span class="kw-2">&amp;</span>[T]&gt;
 <span class="kw">where
     </span>T: Debug + NativeType + PartialOrd,
 {
-    <span class="kw">let </span>part_idx = find_partition_points(values, n, reverse);
+    <span class="kw">let </span>part_idx = find_partition_points(values, n, descending);
     <span class="kw">let </span><span class="kw-2">mut </span>out = Vec::with_capacity(n + <span class="number">1</span>);
 
     <span class="kw">let </span><span class="kw-2">mut </span>start_idx = <span class="number">0_usize</span>;

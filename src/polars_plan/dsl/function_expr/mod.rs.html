@@ -609,7 +609,7 @@
     <span class="attr">#[cfg(feature = <span class="string">&quot;top_k&quot;</span>)]
     </span>TopK {
         k: usize,
-        reverse: bool,
+        descending: bool,
     },
     Shift(i64),
     Reverse,
@@ -868,8 +868,8 @@
                 }
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;top_k&quot;</span>)]
-            </span>TopK { k, reverse } =&gt; {
-                <span class="macro">map!</span>(top_k, k, reverse)
+            </span>TopK { k, descending } =&gt; {
+                <span class="macro">map!</span>(top_k, k, descending)
             }
             Shift(periods) =&gt; <span class="macro">map!</span>(dispatch::shift, periods),
             Reverse =&gt; <span class="macro">map!</span>(dispatch::reverse),

@@ -463,19 +463,19 @@
 /// That means that the first `Series` will be used to determine the ordering
 /// until duplicates are found. Once duplicates are found, the next `Series` will
 /// be used and so on.
-</span><span class="kw">pub fn </span>arg_sort_by(by: <span class="kw-2">&amp;</span>[Series], reverse: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
-    <span class="kw">if </span>by.len() != reverse.len() {
+</span><span class="kw">pub fn </span>arg_sort_by(by: <span class="kw-2">&amp;</span>[Series], descending: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
+    <span class="kw">if </span>by.len() != descending.len() {
         <span class="kw">return </span><span class="prelude-val">Err</span>(PolarsError::ComputeError(
             <span class="macro">format!</span>(
                 <span class="string">&quot;The amount of ordering booleans: {} does not match amount of Series: {}&quot;</span>,
-                reverse.len(),
+                descending.len(),
                 by.len()
             )
             .into(),
         ));
     }
-    <span class="kw">let </span>(first, by, reverse) = prepare_arg_sort(by.to_vec(), reverse.to_vec()).unwrap();
-    first.arg_sort_multiple(<span class="kw-2">&amp;</span>by, <span class="kw-2">&amp;</span>reverse)
+    <span class="kw">let </span>(first, by, descending) = prepare_arg_sort(by.to_vec(), descending.to_vec()).unwrap();
+    first.arg_sort_multiple(<span class="kw-2">&amp;</span>by, <span class="kw-2">&amp;</span>descending)
 }
 
 <span class="comment">// utility to be able to also add literals to concat_str function

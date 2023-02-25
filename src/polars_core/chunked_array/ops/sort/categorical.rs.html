@@ -230,12 +230,12 @@
 }
 
 <span class="doccomment">/// Default sorting nulls
-</span><span class="kw">pub fn </span>order_default_null&lt;T: PartialOrd&gt;(a: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;T&gt;, b: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;T&gt;) -&gt; Ordering {
+</span><span class="kw">pub fn </span>order_ascending_null&lt;T: PartialOrd&gt;(a: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;T&gt;, b: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;T&gt;) -&gt; Ordering {
     sort_with_nulls(a, b)
 }
 
 <span class="doccomment">/// Default sorting nulls
-</span><span class="kw">pub fn </span>order_reverse_null&lt;T: PartialOrd&gt;(a: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;T&gt;, b: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;T&gt;) -&gt; Ordering {
+</span><span class="kw">pub fn </span>order_descending_null&lt;T: PartialOrd&gt;(a: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;T&gt;, b: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;T&gt;) -&gt; Ordering {
     sort_with_nulls(b, a)
 }
 
@@ -278,8 +278,8 @@
                     arg_sort_branch(
                         vals.as_mut_slice(),
                         options.descending,
-                        |(<span class="kw">_</span>, a), (<span class="kw">_</span>, b)| order_default_null(a, b),
-                        |(<span class="kw">_</span>, a), (<span class="kw">_</span>, b)| order_reverse_null(a, b),
+                        |(<span class="kw">_</span>, a), (<span class="kw">_</span>, b)| order_ascending_null(a, b),
+                        |(<span class="kw">_</span>, a), (<span class="kw">_</span>, b)| order_descending_null(a, b),
                         options.multithreaded,
                     );
                     <span class="kw">let </span>cats: NoNull&lt;UInt32Chunked&gt; =
@@ -312,10 +312,10 @@
 
     <span class="doccomment">/// Returned a sorted `ChunkedArray`.
     </span><span class="attr">#[must_use]
-    </span><span class="kw">pub fn </span>sort(<span class="kw-2">&amp;</span><span class="self">self</span>, reverse: bool) -&gt; CategoricalChunked {
+    </span><span class="kw">pub fn </span>sort(<span class="kw-2">&amp;</span><span class="self">self</span>, descending: bool) -&gt; CategoricalChunked {
         <span class="self">self</span>.sort_with(SortOptions {
             nulls_last: <span class="bool-val">false</span>,
-            descending: reverse,
+            descending,
             multithreaded: <span class="bool-val">true</span>,
         })
     }
@@ -341,10 +341,10 @@
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>arg_sort_multiple(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         other: <span class="kw-2">&amp;</span>[Series],
-        reverse: <span class="kw-2">&amp;</span>[bool],
+        descending: <span class="kw-2">&amp;</span>[bool],
     ) -&gt; PolarsResult&lt;IdxCa&gt; {
         <span class="kw">if </span><span class="self">self</span>.use_lexical_sort() {
-            args_validate(<span class="self">self</span>.logical(), other, reverse)<span class="question-mark">?</span>;
+            args_validate(<span class="self">self</span>.logical(), other, descending)<span class="question-mark">?</span>;
             <span class="kw">let </span><span class="kw-2">mut </span>count: IdxSize = <span class="number">0</span>;
             <span class="kw">let </span>vals: Vec&lt;<span class="kw">_</span>&gt; = <span class="self">self
                 </span>.iter_str()
@@ -355,9 +355,9 @@
                 })
                 .collect_trusted();
 
-            arg_sort_multiple_impl(vals, other, reverse)
+            arg_sort_multiple_impl(vals, other, descending)
         } <span class="kw">else </span>{
-            <span class="self">self</span>.logical().arg_sort_multiple(other, reverse)
+            <span class="self">self</span>.logical().arg_sort_multiple(other, descending)
         }
     }
 }

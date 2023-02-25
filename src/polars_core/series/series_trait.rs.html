@@ -747,7 +747,7 @@
             <span class="macro">invalid_operation_panic!</span>(<span class="self">self</span>)
         }
         <span class="kw">fn </span>add_to(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>Series) -&gt; PolarsResult&lt;Series&gt; {
-            <span class="macro">invalid_operation_panic!</span>(<span class="self">self</span>)
+            <span class="macro">invalid_operation!</span>(<span class="self">self</span>)
         }
         <span class="kw">fn </span>multiply(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>Series) -&gt; PolarsResult&lt;Series&gt; {
             <span class="macro">invalid_operation_panic!</span>(<span class="self">self</span>)
@@ -756,7 +756,7 @@
             <span class="macro">invalid_operation_panic!</span>(<span class="self">self</span>)
         }
         <span class="kw">fn </span>remainder(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>Series) -&gt; PolarsResult&lt;Series&gt; {
-            <span class="macro">invalid_operation_panic!</span>(<span class="self">self</span>)
+            <span class="macro">invalid_operation!</span>(<span class="self">self</span>)
         }
         <span class="kw">fn </span>group_tuples(<span class="kw-2">&amp;</span><span class="self">self</span>, _multithreaded: bool, _sorted: bool) -&gt; PolarsResult&lt;GroupsProxy&gt; {
             <span class="macro">invalid_operation!</span>(<span class="self">self</span>)
@@ -769,7 +769,7 @@
             <span class="macro">invalid_operation_panic!</span>(<span class="self">self</span>)
         }
         <span class="attr">#[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
-        </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, _by: <span class="kw-2">&amp;</span>[Series], _reverse: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
+        </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, _by: <span class="kw-2">&amp;</span>[Series], _descending: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
             <span class="prelude-val">Err</span>(PolarsError::InvalidOperation(
                 <span class="string">&quot;arg_sort_multiple is not implemented for this Series&quot;</span>.into(),
             ))

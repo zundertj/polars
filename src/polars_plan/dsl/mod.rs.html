@@ -2170,6 +2170,7 @@
 <a href="#2170" id="2170">2170</a>
 <a href="#2171" id="2171">2171</a>
 <a href="#2172" id="2172">2172</a>
+<a href="#2173" id="2173">2173</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Domain specific language for the Lazy api.
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-categorical&quot;</span>)]
 </span><span class="kw">pub mod </span>cat;
@@ -2764,11 +2765,11 @@
     }
 
     <span class="doccomment">/// Sort in increasing order. See [the eager implementation](Series::sort).
-    </span><span class="kw">pub fn </span>sort(<span class="self">self</span>, reverse: bool) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>sort(<span class="self">self</span>, descending: bool) -&gt; <span class="self">Self </span>{
         Expr::Sort {
             expr: Box::new(<span class="self">self</span>),
             options: SortOptions {
-                descending: reverse,
+                descending,
                 ..Default::default()
             },
         }
@@ -2786,8 +2787,8 @@
     ///
     /// This has time complexity `O(n + k log(n))`.
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;top_k&quot;</span>)]
-    </span><span class="kw">pub fn </span>top_k(<span class="self">self</span>, k: usize, reverse: bool) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.apply_private(FunctionExpr::TopK { k, reverse })
+    </span><span class="kw">pub fn </span>top_k(<span class="self">self</span>, k: usize, descending: bool) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.apply_private(FunctionExpr::TopK { k, descending })
     }
 
     <span class="doccomment">/// Reverse column
@@ -3135,6 +3136,7 @@
                 <span class="kw">match </span>dt {
                     Float32 =&gt; Float32,
                     Float64 =&gt; Float64,
+                    UInt64 =&gt; UInt64,
                     <span class="kw">_ </span>=&gt; Int64,
                 }
             }),
@@ -3403,14 +3405,14 @@
     </span><span class="kw">pub fn </span>sort_by&lt;E: AsRef&lt;[IE]&gt;, IE: Into&lt;Expr&gt; + Clone, R: AsRef&lt;[bool]&gt;&gt;(
         <span class="self">self</span>,
         by: E,
-        reverse: R,
+        descending: R,
     ) -&gt; Expr {
         <span class="kw">let </span>by = by.as_ref().iter().map(|e| e.clone().into()).collect();
-        <span class="kw">let </span>reverse = reverse.as_ref().to_vec();
+        <span class="kw">let </span>descending = descending.as_ref().to_vec();
         Expr::SortBy {
             expr: Box::new(<span class="self">self</span>),
             by,
-            reverse,
+            descending,
         }
     }
 

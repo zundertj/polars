@@ -84,12 +84,12 @@
 </pre><pre class="rust"><code><span class="kw">use super</span>::<span class="kw-2">*</span>;
 
 <span class="attr">#[inline]
-</span><span class="kw">fn </span>default_order&lt;T: PartialOrd + IsFloat&gt;(a: <span class="kw-2">&amp;</span>(IdxSize, T), b: <span class="kw-2">&amp;</span>(IdxSize, T)) -&gt; Ordering {
+</span><span class="kw">fn </span>ascending_order&lt;T: PartialOrd + IsFloat&gt;(a: <span class="kw-2">&amp;</span>(IdxSize, T), b: <span class="kw-2">&amp;</span>(IdxSize, T)) -&gt; Ordering {
     compare_fn_nan_max(<span class="kw-2">&amp;</span>a.<span class="number">1</span>, <span class="kw-2">&amp;</span>b.<span class="number">1</span>)
 }
 
 <span class="attr">#[inline]
-</span><span class="kw">fn </span>reverse_order&lt;T: PartialOrd + IsFloat&gt;(a: <span class="kw-2">&amp;</span>(IdxSize, T), b: <span class="kw-2">&amp;</span>(IdxSize, T)) -&gt; Ordering {
+</span><span class="kw">fn </span>descending_order&lt;T: PartialOrd + IsFloat&gt;(a: <span class="kw-2">&amp;</span>(IdxSize, T), b: <span class="kw-2">&amp;</span>(IdxSize, T)) -&gt; Ordering {
     compare_fn_nan_max(<span class="kw-2">&amp;</span>b.<span class="number">1</span>, <span class="kw-2">&amp;</span>a.<span class="number">1</span>)
 }
 
@@ -105,14 +105,14 @@
     J: IntoIterator&lt;Item = <span class="prelude-ty">Option</span>&lt;T&gt;&gt;,
     T: PartialOrd + Send + Sync + IsFloat,
 {
-    <span class="kw">let </span>reverse = options.descending;
+    <span class="kw">let </span>descending = options.descending;
     <span class="kw">let </span>nulls_last = options.nulls_last;
 
     <span class="kw">let </span><span class="kw-2">mut </span>vals = Vec::with_capacity(len - null_count);
 
-    <span class="comment">// if we sort reverse, the nulls are last
-    // and need to be extended to the indices in reverse order
-    </span><span class="kw">let </span>null_cap = <span class="kw">if </span>reverse || nulls_last {
+    <span class="comment">// if we sort descending, the nulls are last
+    // and need to be extended to the indices in descending order
+    </span><span class="kw">let </span>null_cap = <span class="kw">if </span>descending || nulls_last {
         null_count
         <span class="comment">// if we sort normally, the nulls are first
         // and can be extended with the sorted indices
@@ -141,14 +141,14 @@
 
     arg_sort_branch(
         vals.as_mut_slice(),
-        reverse,
-        default_order,
-        reverse_order,
+        descending,
+        ascending_order,
+        descending_order,
         options.multithreaded,
     );
 
     <span class="kw">let </span>iter = vals.into_iter().map(|(idx, _v)| idx);
-    <span class="kw">let </span>idx = <span class="kw">if </span>reverse || nulls_last {
+    <span class="kw">let </span>idx = <span class="kw">if </span>descending || nulls_last {
         <span class="kw">let </span><span class="kw-2">mut </span>idx = Vec::with_capacity(len);
         idx.extend(iter);
         idx.extend(nulls_idx.into_iter().rev());

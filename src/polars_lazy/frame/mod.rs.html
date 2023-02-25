@@ -1609,13 +1609,13 @@
     /// }
     /// ```
     </span><span class="kw">pub fn </span>sort(<span class="self">self</span>, by_column: <span class="kw-2">&amp;</span>str, options: SortOptions) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>reverse = options.descending;
+        <span class="kw">let </span>descending = options.descending;
         <span class="kw">let </span>nulls_last = options.nulls_last;
 
         <span class="kw">let </span>opt_state = <span class="self">self</span>.get_opt_state();
         <span class="kw">let </span>lp = <span class="self">self
             </span>.get_plan_builder()
-            .sort(<span class="macro">vec!</span>[col(by_column)], <span class="macro">vec!</span>[reverse], nulls_last)
+            .sort(<span class="macro">vec!</span>[col(by_column)], <span class="macro">vec!</span>[descending], nulls_last)
             .build();
         <span class="self">Self</span>::from_logical_plan(lp, opt_state)
     }
@@ -1637,18 +1637,18 @@
     </span><span class="kw">pub fn </span>sort_by_exprs&lt;E: AsRef&lt;[Expr]&gt;, B: AsRef&lt;[bool]&gt;&gt;(
         <span class="self">self</span>,
         by_exprs: E,
-        reverse: B,
+        descending: B,
         nulls_last: bool,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>by_exprs = by_exprs.as_ref().to_vec();
-        <span class="kw">let </span>reverse = reverse.as_ref().to_vec();
+        <span class="kw">let </span>descending = descending.as_ref().to_vec();
         <span class="kw">if </span>by_exprs.is_empty() {
             <span class="self">self
         </span>} <span class="kw">else </span>{
             <span class="kw">let </span>opt_state = <span class="self">self</span>.get_opt_state();
             <span class="kw">let </span>lp = <span class="self">self
                 </span>.get_plan_builder()
-                .sort(by_exprs, reverse, nulls_last)
+                .sort(by_exprs, descending, nulls_last)
                 .build();
             <span class="self">Self</span>::from_logical_plan(lp, opt_state)
         }

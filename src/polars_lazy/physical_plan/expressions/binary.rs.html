@@ -699,6 +699,7 @@
 <a href="#699" id="699">699</a>
 <a href="#700" id="700">700</a>
 <a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::convert::TryFrom;
 <span class="kw">use </span>std::sync::Arc;
 
@@ -828,14 +829,14 @@
         groups: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>GroupsProxy,
         state: <span class="kw-2">&amp;</span>ExecutionState,
     ) -&gt; PolarsResult&lt;AggregationContext&lt;<span class="lifetime">&#39;a</span>&gt;&gt; {
-        <span class="kw">let </span>(result_a, result_b) = POOL.install(|| {
-            rayon::join(
-                || <span class="self">self</span>.left.evaluate_on_groups(df, groups, state),
-                || <span class="self">self</span>.right.evaluate_on_groups(df, groups, state),
-            )
-        });
-        <span class="kw">let </span><span class="kw-2">mut </span>ac_l = result_a<span class="question-mark">?</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>ac_r = result_b<span class="question-mark">?</span>;
+        <span class="comment">// let (result_a, result_b) = POOL.install(|| {
+        //     rayon::join(
+        //         || self.left.evaluate_on_groups(df, groups, state),
+        //         || self.right.evaluate_on_groups(df, groups, state),
+        //     )
+        // });
+        </span><span class="kw">let </span><span class="kw-2">mut </span>ac_l = <span class="self">self</span>.left.evaluate_on_groups(df, groups, state)<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>ac_r = <span class="self">self</span>.right.evaluate_on_groups(df, groups, state)<span class="question-mark">?</span>;
 
         <span class="kw">match </span>(
             ac_l.agg_state(),
@@ -1132,6 +1133,7 @@
                     .collect::&lt;PolarsResult&lt;ListChunked&gt;&gt;()<span class="question-mark">?</span>;
                 out.rename(ac_l.series().name());
                 ac_l.with_series(out.into_series(), <span class="bool-val">true</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.expr))<span class="question-mark">?</span>;
+                ac_l.with_update_groups(UpdateGroups::WithSeriesLen);
                 <span class="prelude-val">Ok</span>(ac_l)
             }
         }

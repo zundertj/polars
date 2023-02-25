@@ -556,6 +556,7 @@
 <a href="#556" id="556">556</a>
 <a href="#557" id="557">557</a>
 <a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
 </pre><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-binary&quot;</span>)]
 </span><span class="kw">mod </span>binary;
 <span class="kw">mod </span>boolean;
@@ -761,16 +762,16 @@
             }
 
             <span class="attr">#[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
-            </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>[Series], reverse: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
-                <span class="self">self</span>.<span class="number">0</span>.arg_sort_multiple(by, reverse)
+            </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>[Series], descending: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
+                <span class="self">self</span>.<span class="number">0</span>.arg_sort_multiple(by, descending)
             }
         }
 
         <span class="kw">impl </span>SeriesTrait <span class="kw">for </span>SeriesWrap&lt;<span class="macro-nonterminal">$ca</span>&gt; {
             <span class="kw">fn </span>is_sorted_flag(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; IsSorted {
-                <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_flag() {
+                <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_ascending_flag() {
                     IsSorted::Ascending
-                } <span class="kw">else if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_reverse_flag() {
+                } <span class="kw">else if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_descending_flag() {
                     IsSorted::Descending
                 } <span class="kw">else </span>{
                     IsSorted::Not
@@ -910,7 +911,8 @@
                     Cow::Borrowed(idx)
                 };
                 <span class="kw">let </span><span class="kw-2">mut </span>out = ChunkTake::take_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, (<span class="kw-2">&amp;*</span>idx).into());
-                <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_flag() &amp;&amp; (idx.is_sorted_flag() || idx.is_sorted_reverse_flag())
+                <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_ascending_flag()
+                    &amp;&amp; (idx.is_sorted_ascending_flag() || idx.is_sorted_descending_flag())
                 {
                     out.set_sorted_flag(idx.is_sorted_flag2())
                 }

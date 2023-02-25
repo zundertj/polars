@@ -748,6 +748,8 @@
 <a href="#748" id="748">748</a>
 <a href="#749" id="749">749</a>
 <a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::io::{Read, Seek};
 <span class="kw">use </span>std::ops::Deref;
 <span class="kw">use </span>std::path::PathBuf;
@@ -875,6 +877,7 @@
         rechunk: bool,
         low_memory: bool,
         cloud_options: <span class="prelude-ty">Option</span>&lt;CloudOptions&gt;,
+        use_statistics: bool,
     ) -&gt; PolarsResult&lt;<span class="self">Self</span>&gt; {
         <span class="kw">use </span>polars_io::{is_cloud_url, SerReader <span class="kw">as _</span>};
 
@@ -920,6 +923,7 @@
                 rechunk,
                 file_counter: Default::default(),
                 low_memory,
+                use_statistics,
             },
             cloud_options,
         }
@@ -1306,14 +1310,14 @@
         .into()
     }
 
-    <span class="kw">pub fn </span>sort(<span class="self">self</span>, by_column: Vec&lt;Expr&gt;, reverse: Vec&lt;bool&gt;, null_last: bool) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>sort(<span class="self">self</span>, by_column: Vec&lt;Expr&gt;, descending: Vec&lt;bool&gt;, null_last: bool) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>schema = <span class="macro">try_delayed!</span>(<span class="self">self</span>.<span class="number">0</span>.schema(), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, into);
         <span class="kw">let </span>by_column = <span class="macro">try_delayed!</span>(rewrite_projections(by_column, <span class="kw-2">&amp;</span>schema, <span class="kw-2">&amp;</span>[]), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, into);
         LogicalPlan::Sort {
             input: Box::new(<span class="self">self</span>.<span class="number">0</span>),
             by_column,
             args: SortArguments {
-                reverse,
+                descending,
                 nulls_last: null_last,
                 slice: <span class="prelude-val">None</span>,
             },

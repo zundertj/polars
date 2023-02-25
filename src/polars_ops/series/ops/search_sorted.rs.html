@@ -242,6 +242,11 @@
 <a href="#242" id="242">242</a>
 <a href="#243" id="243">243</a>
 <a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::cmp::Ordering;
 <span class="kw">use </span>std::fmt::Debug;
 
@@ -344,7 +349,7 @@
     arr: G,
     len: usize,
     search_value: I,
-    reverse: bool,
+    descending: bool,
 ) <span class="kw">where
     </span>G: GetArray&lt;I&gt;,
     I: PartialEq + Debug + Copy + PartialOrd + IsFloat,
@@ -362,7 +367,7 @@
         </span><span class="kw">let </span>cmp = <span class="kw">match unsafe </span>{ arr._get_value_unchecked(mid <span class="kw">as </span>usize) } {
             <span class="prelude-val">None </span>=&gt; Ordering::Less,
             <span class="prelude-val">Some</span>(value) =&gt; {
-                <span class="kw">if </span>reverse {
+                <span class="kw">if </span>descending {
                     compare_fn_nan_max(<span class="kw-2">&amp;</span>search_value, <span class="kw-2">&amp;</span>value)
                 } <span class="kw">else </span>{
                     compare_fn_nan_max(<span class="kw-2">&amp;</span>value, <span class="kw-2">&amp;</span>search_value)
@@ -393,7 +398,7 @@
     ca: <span class="kw-2">&amp;</span>ChunkedArray&lt;T&gt;,
     search_values: <span class="kw-2">&amp;</span>ChunkedArray&lt;T&gt;,
     side: SearchSortedSide,
-    reverse: bool,
+    descending: bool,
 ) -&gt; Vec&lt;IdxSize&gt;
 <span class="kw">where
     </span>T: PolarsNumericType,
@@ -406,15 +411,20 @@
     <span class="kw">for </span>search_arr <span class="kw">in </span>search_values.downcast_iter() {
         <span class="kw">if </span>search_arr.null_count() == <span class="number">0 </span>{
             <span class="kw">for </span>search_value <span class="kw">in </span>search_arr.values_iter() {
-                binary_search_array(side, <span class="kw-2">&amp;mut </span>out, arr, ca.len(), <span class="kw-2">*</span>search_value, reverse)
+                binary_search_array(side, <span class="kw-2">&amp;mut </span>out, arr, ca.len(), <span class="kw-2">*</span>search_value, descending)
             }
         } <span class="kw">else </span>{
             <span class="kw">for </span>opt_v <span class="kw">in </span>search_arr.into_iter() {
                 <span class="kw">match </span>opt_v {
                     <span class="prelude-val">None </span>=&gt; out.push(<span class="number">0</span>),
-                    <span class="prelude-val">Some</span>(search_value) =&gt; {
-                        binary_search_array(side, <span class="kw-2">&amp;mut </span>out, arr, ca.len(), <span class="kw-2">*</span>search_value, reverse)
-                    }
+                    <span class="prelude-val">Some</span>(search_value) =&gt; binary_search_array(
+                        side,
+                        <span class="kw-2">&amp;mut </span>out,
+                        arr,
+                        ca.len(),
+                        <span class="kw-2">*</span>search_value,
+                        descending,
+                    ),
                 }
             }
         }
@@ -426,7 +436,7 @@
     ca: <span class="kw-2">&amp;</span>Utf8Chunked,
     search_values: <span class="kw-2">&amp;</span>Utf8Chunked,
     side: SearchSortedSide,
-    reverse: bool,
+    descending: bool,
 ) -&gt; Vec&lt;IdxSize&gt; {
     <span class="kw">let </span>ca = ca.rechunk();
     <span class="kw">let </span>arr = ca.downcast_iter().next().unwrap();
@@ -436,14 +446,14 @@
     <span class="kw">for </span>search_arr <span class="kw">in </span>search_values.downcast_iter() {
         <span class="kw">if </span>search_arr.null_count() == <span class="number">0 </span>{
             <span class="kw">for </span>search_value <span class="kw">in </span>search_arr.values_iter() {
-                binary_search_array(side, <span class="kw-2">&amp;mut </span>out, arr, ca.len(), search_value, reverse)
+                binary_search_array(side, <span class="kw-2">&amp;mut </span>out, arr, ca.len(), search_value, descending)
             }
         } <span class="kw">else </span>{
             <span class="kw">for </span>opt_v <span class="kw">in </span>search_arr.into_iter() {
                 <span class="kw">match </span>opt_v {
                     <span class="prelude-val">None </span>=&gt; out.push(<span class="number">0</span>),
                     <span class="prelude-val">Some</span>(search_value) =&gt; {
-                        binary_search_array(side, <span class="kw-2">&amp;mut </span>out, arr, ca.len(), search_value, reverse)
+                        binary_search_array(side, <span class="kw-2">&amp;mut </span>out, arr, ca.len(), search_value, descending)
                     }
                 }
             }
@@ -456,7 +466,7 @@
     s: <span class="kw-2">&amp;</span>Series,
     search_values: <span class="kw-2">&amp;</span>Series,
     side: SearchSortedSide,
-    reverse: bool,
+    descending: bool,
 ) -&gt; PolarsResult&lt;IdxCa&gt; {
     <span class="kw">let </span>original_dtype = s.dtype();
     <span class="kw">let </span>s = s.to_physical_repr();
@@ -466,7 +476,7 @@
         DataType::Utf8 =&gt; {
             <span class="kw">let </span>ca = s.utf8().unwrap();
             <span class="kw">let </span>search_values = search_values.utf8()<span class="question-mark">?</span>;
-            <span class="kw">let </span>idx = search_sorted_utf8_array(ca, search_values, side, reverse);
+            <span class="kw">let </span>idx = search_sorted_utf8_array(ca, search_values, side, descending);
 
             <span class="prelude-val">Ok</span>(IdxCa::new_vec(s.name(), idx))
         }
@@ -477,7 +487,7 @@
                 <span class="kw">let </span>ca: <span class="kw-2">&amp;</span>ChunkedArray&lt;<span class="macro-nonterminal">$T</span>&gt; = s.as_ref().as_ref().as_ref();
                 <span class="kw">let </span>search_values: <span class="kw-2">&amp;</span>ChunkedArray&lt;<span class="macro-nonterminal">$T</span>&gt; = search_values.as_ref().as_ref().as_ref();
 
-                search_sorted_ca_array(ca, search_values, side, reverse)
+                search_sorted_ca_array(ca, search_values, side, descending)
             });
             <span class="prelude-val">Ok</span>(IdxCa::new_vec(s.name(), idx))
         }

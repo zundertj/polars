@@ -179,6 +179,10 @@
 <a href="#179" id="179">179</a>
 <a href="#180" id="180">180</a>
 <a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::sync::Arc;
 
@@ -242,6 +246,10 @@
 
     <span class="kw">fn </span>chunks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Vec&lt;ArrayRef&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.chunks
+    }
+
+    <span class="kw">fn </span>chunk_lengths(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ChunkIdIter {
+        <span class="self">self</span>.chunks.iter().map(|chunk| chunk.len())
     }
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;chunked_ids&quot;</span>)]

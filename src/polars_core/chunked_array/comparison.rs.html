@@ -1502,7 +1502,7 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                     rhs.equal(value)
                 } <span class="kw">else </span>{
-                    <span class="self">self</span>.is_null()
+                    rhs.is_null()
                 }
             }
             <span class="kw">_ </span>=&gt; {
@@ -1527,7 +1527,7 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                     rhs.not_equal(value)
                 } <span class="kw">else </span>{
-                    <span class="self">self</span>.is_not_null()
+                    rhs.is_not_null()
                 }
             }
             <span class="kw">_ </span>=&gt; {
@@ -1934,7 +1934,7 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                 rhs.equal(value)
             } <span class="kw">else </span>{
-                <span class="self">self</span>.is_null()
+                rhs.is_null()
             }
         } <span class="kw">else </span>{
             <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
@@ -1954,7 +1954,7 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                 rhs.not_equal(value)
             } <span class="kw">else </span>{
-                <span class="self">self</span>.is_not_null()
+                rhs.is_not_null()
             }
         } <span class="kw">else </span>{
             <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);

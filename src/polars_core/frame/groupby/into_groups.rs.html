@@ -423,6 +423,9 @@
 <a href="#423" id="423">423</a>
 <a href="#424" id="424">424</a>
 <a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
 </pre><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;groupby_list&quot;</span>)]
 </span><span class="kw">use </span>polars_arrow::kernels::list_bytes_iter::numeric_list_bytes_iter;
 <span class="kw">use </span>polars_arrow::kernels::sort_partition::{create_clean_partitions, partition_to_groups};
@@ -529,7 +532,8 @@
 
         <span class="kw">let </span>n_threads = POOL.current_num_threads();
         <span class="kw">let </span>groups = <span class="kw">if </span>multithreaded &amp;&amp; n_threads &gt; <span class="number">1 </span>{
-            <span class="kw">let </span>parts = create_clean_partitions(values, n_threads, <span class="self">self</span>.is_sorted_reverse_flag());
+            <span class="kw">let </span>parts =
+                create_clean_partitions(values, n_threads, <span class="self">self</span>.is_sorted_descending_flag());
             <span class="kw">let </span>n_parts = parts.len();
 
             <span class="kw">let </span>first_ptr = <span class="kw-2">&amp;</span>values[<span class="number">0</span>] <span class="kw">as </span><span class="kw-2">*const </span>T::Native <span class="kw">as </span>usize;
@@ -577,7 +581,9 @@
 {
     <span class="kw">fn </span>group_tuples(<span class="kw-2">&amp;</span><span class="self">self</span>, multithreaded: bool, sorted: bool) -&gt; PolarsResult&lt;GroupsProxy&gt; {
         <span class="comment">// sorted path
-        </span><span class="kw">if </span><span class="self">self</span>.is_sorted_flag() || <span class="self">self</span>.is_sorted_reverse_flag() &amp;&amp; <span class="self">self</span>.chunks().len() == <span class="number">1 </span>{
+        </span><span class="kw">if </span><span class="self">self</span>.is_sorted_ascending_flag()
+            || <span class="self">self</span>.is_sorted_descending_flag() &amp;&amp; <span class="self">self</span>.chunks().len() == <span class="number">1
+        </span>{
             <span class="comment">// don&#39;t have to pass `sorted` arg, GroupSlice is always sorted.
             </span><span class="kw">return </span><span class="prelude-val">Ok</span>(GroupsProxy::Slice {
                 groups: <span class="self">self</span>.create_groups_from_sorted(multithreaded),

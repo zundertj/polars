@@ -680,6 +680,7 @@
 <a href="#680" id="680">680</a>
 <a href="#681" id="681">681</a>
 <a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
 </pre><pre class="rust"><code><span class="kw">use </span>memchr::memchr2_iter;
 <span class="kw">use </span>num::traits::Pow;
 <span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
@@ -1271,10 +1272,11 @@
                                             <span class="string">&quot;Could not parse `{}` as dtype {:?} at column {}.\n\
                                             The current offset in the file is {} bytes.\n\
                                             \n\
-                                            Consider specifying the correct dtype, increasing\n\
-                                            the number of records used to infer the schema,\n\
-                                            enabling the `ignore_errors` flag, or adding\n\
-                                            `{}` to the `null_values` list.&quot;</span>,
+                                            You might want to try:\n\
+                                            - increasing `infer_schema_length` (e.g. `infer_schema_length=10000`),\n\
+                                            - specifying the correct dtype with the `dtypes` argument\n\
+                                            - setting `ignore_errors` to `True`,\n\
+                                            - adding `{}` to the `null_values` list.&quot;</span>,
                                             <span class="kw-2">&amp;</span>unparsable,
                                             buf.dtype(),
                                             idx,

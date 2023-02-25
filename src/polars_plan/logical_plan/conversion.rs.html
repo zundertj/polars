@@ -942,6 +942,14 @@
 <a href="#942" id="942">942</a>
 <a href="#943" id="943">943</a>
 <a href="#944" id="944">944</a>
+<a href="#945" id="945">945</a>
+<a href="#946" id="946">946</a>
+<a href="#947" id="947">947</a>
+<a href="#948" id="948">948</a>
+<a href="#949" id="949">949</a>
+<a href="#950" id="950">950</a>
+<a href="#951" id="951">951</a>
+<a href="#952" id="952">952</a>
 </pre><pre class="rust"><code><span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
@@ -983,10 +991,14 @@
             expr: to_aexpr(<span class="kw-2">*</span>expr, arena),
             options,
         },
-        Expr::SortBy { expr, by, reverse } =&gt; AExpr::SortBy {
+        Expr::SortBy {
+            expr,
+            by,
+            descending,
+        } =&gt; AExpr::SortBy {
             expr: to_aexpr(<span class="kw-2">*</span>expr, arena),
             by: by.into_iter().map(|e| to_aexpr(e, arena)).collect(),
-            reverse,
+            descending,
         },
         Expr::Filter { input, by } =&gt; AExpr::Filter {
             input: to_aexpr(<span class="kw-2">*</span>input, arena),
@@ -1419,7 +1431,11 @@
                 idx: Box::new(idx),
             }
         }
-        AExpr::SortBy { expr, by, reverse } =&gt; {
+        AExpr::SortBy {
+            expr,
+            by,
+            descending,
+        } =&gt; {
             <span class="kw">let </span>expr = node_to_expr(expr, expr_arena);
             <span class="kw">let </span>by = by
                 .iter()
@@ -1428,7 +1444,7 @@
             Expr::SortBy {
                 expr: Box::new(expr),
                 by,
-                reverse,
+                descending,
             }
         }
         AExpr::Filter { input, by } =&gt; {

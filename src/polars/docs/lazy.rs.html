@@ -366,10 +366,10 @@
 //! // sort this DataFrame by multiple columns
 //!
 //! // ordering of the columns
-//! let reverse = vec![true, false];
+//! let descending = vec![true, false];
 //!
 //! let sorted = df.lazy()
-//!     .sort_by_exprs(vec![col(&quot;b&quot;), col(&quot;a&quot;)], reverse, false)
+//!     .sort_by_exprs(vec![col(&quot;b&quot;), col(&quot;a&quot;)], descending, false)
 //!     .collect()?;
 //!
 //! // sorted:

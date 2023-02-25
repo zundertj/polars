@@ -504,6 +504,8 @@
 <a href="#504" id="504">504</a>
 <a href="#505" id="505">505</a>
 <a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::ops::{Deref, DerefMut};
 
@@ -679,16 +681,16 @@
         <span class="self">self</span>.<span class="number">0</span>.group_tuples(multithreaded, sorted)
     }
     <span class="attr">#[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
-    </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>[Series], reverse: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
-        <span class="self">self</span>.<span class="number">0</span>.deref().arg_sort_multiple(by, reverse)
+    </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>[Series], descending: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
+        <span class="self">self</span>.<span class="number">0</span>.deref().arg_sort_multiple(by, descending)
     }
 }
 
 <span class="kw">impl </span>SeriesTrait <span class="kw">for </span>SeriesWrap&lt;DatetimeChunked&gt; {
     <span class="kw">fn </span>is_sorted_flag(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; IsSorted {
-        <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_flag() {
+        <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_ascending_flag() {
             IsSorted::Ascending
-        } <span class="kw">else if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_reverse_flag() {
+        } <span class="kw">else if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_descending_flag() {
             IsSorted::Descending
         } <span class="kw">else </span>{
             IsSorted::Not
@@ -804,7 +806,9 @@
     <span class="kw">unsafe fn </span>take_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: <span class="kw-2">&amp;</span>IdxCa) -&gt; PolarsResult&lt;Series&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>out = ChunkTake::take_unchecked(<span class="self">self</span>.<span class="number">0</span>.deref(), idx.into());
 
-        <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_flag() &amp;&amp; (idx.is_sorted_flag() || idx.is_sorted_reverse_flag()) {
+        <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_sorted_ascending_flag()
+            &amp;&amp; (idx.is_sorted_ascending_flag() || idx.is_sorted_descending_flag())
+        {
             out.set_sorted_flag(idx.is_sorted_flag2())
         }
 

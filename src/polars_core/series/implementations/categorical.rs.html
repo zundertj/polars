@@ -546,16 +546,16 @@
     }
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
-    </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>[Series], reverse: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
-        <span class="self">self</span>.<span class="number">0</span>.arg_sort_multiple(by, reverse)
+    </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>[Series], descending: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
+        <span class="self">self</span>.<span class="number">0</span>.arg_sort_multiple(by, descending)
     }
 }
 
 <span class="kw">impl </span>SeriesTrait <span class="kw">for </span>SeriesWrap&lt;CategoricalChunked&gt; {
     <span class="kw">fn </span>is_sorted_flag(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; IsSorted {
-        <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.logical().is_sorted_flag() {
+        <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.logical().is_sorted_ascending_flag() {
             IsSorted::Ascending
-        } <span class="kw">else if </span><span class="self">self</span>.<span class="number">0</span>.logical().is_sorted_reverse_flag() {
+        } <span class="kw">else if </span><span class="self">self</span>.<span class="number">0</span>.logical().is_sorted_descending_flag() {
             IsSorted::Descending
         } <span class="kw">else </span>{
             IsSorted::Not

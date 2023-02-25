@@ -486,7 +486,7 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>rank(s: <span class="kw-2">&amp;</span>Series, method: RankMethod, reverse: bool) -&gt; Series {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>rank(s: <span class="kw-2">&amp;</span>Series, method: RankMethod, descending: bool) -&gt; Series {
     <span class="kw">match </span>s.len() {
         <span class="number">1 </span>=&gt; {
             <span class="kw">return match </span>method {
@@ -507,18 +507,18 @@
         <span class="kw">let </span>nulls = s.is_not_null().rechunk();
         <span class="kw">let </span>arr = nulls.downcast_iter().next().unwrap();
         <span class="kw">let </span>validity = arr.values();
-        <span class="comment">// Currently, nulls tie with the minimum or maximum bound for a type, depending on reverse.
+        <span class="comment">// Currently, nulls tie with the minimum or maximum bound for a type, depending on descending.
         // TODO: Need to expose nulls_last in arg_sort to prevent this.
         // Fill using MaxBound/MinBound to give nulls last rank.
         // we will replace them later.
-        </span><span class="kw">let </span>null_strategy = <span class="kw">if </span>reverse {
+        </span><span class="kw">let </span>null_strategy = <span class="kw">if </span>descending {
             FillNullStrategy::MinBound
         } <span class="kw">else </span>{
             FillNullStrategy::MaxBound
         };
         <span class="kw">let </span>s = s.fill_null(null_strategy).unwrap();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>out = rank(<span class="kw-2">&amp;</span>s, method, reverse);
+        <span class="kw">let </span><span class="kw-2">mut </span>out = rank(<span class="kw-2">&amp;</span>s, method, descending);
         <span class="kw">unsafe </span>{
             <span class="kw">let </span>arr = <span class="kw-2">&amp;mut </span>out.chunks_mut()[<span class="number">0</span>];
             <span class="kw-2">*</span>arr = arr.with_validity(<span class="prelude-val">Some</span>(validity.clone()))
@@ -531,7 +531,7 @@
     </span><span class="kw">let </span>len = s.len();
     <span class="kw">let </span>null_count = s.null_count();
     <span class="kw">let </span>sort_idx_ca = s.arg_sort(SortOptions {
-        descending: reverse,
+        descending,
         ..Default::default()
     });
     <span class="kw">let </span>sort_idx = sort_idx_ca.downcast_iter().next().unwrap().values();

@@ -3690,6 +3690,13 @@
 <a href="#3690" id="3690">3690</a>
 <a href="#3691" id="3691">3691</a>
 <a href="#3692" id="3692">3692</a>
+<a href="#3693" id="3693">3693</a>
+<a href="#3694" id="3694">3694</a>
+<a href="#3695" id="3695">3695</a>
+<a href="#3696" id="3696">3696</a>
+<a href="#3697" id="3697">3697</a>
+<a href="#3698" id="3698">3698</a>
+<a href="#3699" id="3699">3699</a>
 </pre><pre class="rust"><code><span class="doccomment">//! DataFrame module.
 </span><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::iter::{FromIterator, Iterator};
@@ -3725,6 +3732,8 @@
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="kw">use </span><span class="kw">crate</span>::frame::groupby::GroupsIndicator;
+<span class="attr">#[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
+</span><span class="kw">use </span><span class="kw">crate</span>::prelude::sort::argsort_multiple_row_fmt;
 <span class="attr">#[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::prelude::sort::prepare_arg_sort;
 <span class="kw">use </span><span class="kw">crate</span>::series::IsSorted;
@@ -5474,12 +5483,12 @@
     </span><span class="kw">pub fn </span>sort_in_place(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         by_column: <span class="kw">impl </span>IntoVec&lt;String&gt;,
-        reverse: <span class="kw">impl </span>IntoVec&lt;bool&gt;,
+        descending: <span class="kw">impl </span>IntoVec&lt;bool&gt;,
     ) -&gt; PolarsResult&lt;<span class="kw-2">&amp;mut </span><span class="self">Self</span>&gt; {
         <span class="kw">let </span>by_column = <span class="self">self</span>.select_series(by_column)<span class="question-mark">?</span>;
-        <span class="kw">let </span>reverse = reverse.into_vec();
+        <span class="kw">let </span>descending = descending.into_vec();
         <span class="self">self</span>.columns = <span class="self">self
-            </span>.sort_impl(by_column, reverse, <span class="bool-val">false</span>, <span class="prelude-val">None</span>, <span class="bool-val">true</span>)<span class="question-mark">?
+            </span>.sort_impl(by_column, descending, <span class="bool-val">false</span>, <span class="prelude-val">None</span>, <span class="bool-val">true</span>)<span class="question-mark">?
             </span>.columns;
         <span class="prelude-val">Ok</span>(<span class="self">self</span>)
     }
@@ -5489,7 +5498,7 @@
     </span><span class="kw">pub fn </span>sort_impl(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         by_column: Vec&lt;Series&gt;,
-        reverse: Vec&lt;bool&gt;,
+        descending: Vec&lt;bool&gt;,
         nulls_last: bool,
         slice: <span class="prelude-ty">Option</span>&lt;(i64, usize)&gt;,
         parallel: bool,
@@ -5505,13 +5514,13 @@
 
         // therefore when we try to set the first columns as sorted, we ignore the error
         // as expressions are not present (they are renamed to _POLARS_SORT_COLUMN_i.
-        </span><span class="kw">let </span>first_reverse = reverse[<span class="number">0</span>];
+        </span><span class="kw">let </span>first_descending = descending[<span class="number">0</span>];
         <span class="kw">let </span>first_by_column = by_column[<span class="number">0</span>].name().to_string();
         <span class="kw">let </span><span class="kw-2">mut </span>take = <span class="kw">match </span>by_column.len() {
             <span class="number">1 </span>=&gt; {
                 <span class="kw">let </span>s = <span class="kw-2">&amp;</span>by_column[<span class="number">0</span>];
                 <span class="kw">let </span>options = SortOptions {
-                    descending: reverse[<span class="number">0</span>],
+                    descending: descending[<span class="number">0</span>],
                     nulls_last,
                     multithreaded: parallel,
                 };
@@ -5531,9 +5540,14 @@
             <span class="kw">_ </span>=&gt; {
                 <span class="attr">#[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
                 </span>{
-                    <span class="kw">let </span>(first, by_column, reverse) = prepare_arg_sort(by_column, reverse)<span class="question-mark">?</span>;
-                    first.arg_sort_multiple(<span class="kw-2">&amp;</span>by_column, <span class="kw-2">&amp;</span>reverse)<span class="question-mark">?
-                </span>}
+                    <span class="kw">if </span>std::env::var(<span class="string">&quot;POLARS_ROW_FMT_SORT&quot;</span>).is_ok() {
+                        argsort_multiple_row_fmt(<span class="kw-2">&amp;</span>by_column, <span class="kw-2">&amp;</span>descending, nulls_last, parallel)<span class="question-mark">?
+                    </span>} <span class="kw">else </span>{
+                        <span class="kw">let </span>(first, by_column, descending) =
+                            prepare_arg_sort(by_column, descending)<span class="question-mark">?</span>;
+                        first.arg_sort_multiple(<span class="kw-2">&amp;</span>by_column, <span class="kw-2">&amp;</span>descending)<span class="question-mark">?
+                    </span>}
+                }
                 <span class="attr">#[cfg(not(feature = <span class="string">&quot;sort_multiple&quot;</span>))]
                 </span>{
                     <span class="macro">panic!</span>(<span class="string">&quot;activate `sort_multiple` feature gate to enable this functionality&quot;</span>);
@@ -5553,7 +5567,7 @@
         // not present in the dataframe
         </span><span class="kw">let _ </span>= df.apply(<span class="kw-2">&amp;</span>first_by_column, |s| {
             <span class="kw">let </span><span class="kw-2">mut </span>s = s.clone();
-            <span class="kw">if </span>first_reverse {
+            <span class="kw">if </span>first_descending {
                 s.set_sorted_flag(IsSorted::Descending)
             } <span class="kw">else </span>{
                 s.set_sorted_flag(IsSorted::Ascending)
@@ -5569,8 +5583,8 @@
     ///
     /// ```
     /// # use polars_core::prelude::*;
-    /// fn sort_example(df: &amp;DataFrame, reverse: bool) -&gt; PolarsResult&lt;DataFrame&gt; {
-    ///     df.sort([&quot;a&quot;], reverse)
+    /// fn sort_example(df: &amp;DataFrame, descending: bool) -&gt; PolarsResult&lt;DataFrame&gt; {
+    ///     df.sort([&quot;a&quot;], descending)
     /// }
     ///
     /// fn sort_by_multiple_columns_example(df: &amp;DataFrame) -&gt; PolarsResult&lt;DataFrame&gt; {
@@ -5580,10 +5594,10 @@
     </span><span class="kw">pub fn </span>sort(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         by_column: <span class="kw">impl </span>IntoVec&lt;String&gt;,
-        reverse: <span class="kw">impl </span>IntoVec&lt;bool&gt;,
+        descending: <span class="kw">impl </span>IntoVec&lt;bool&gt;,
     ) -&gt; PolarsResult&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>df = <span class="self">self</span>.clone();
-        df.sort_in_place(by_column, reverse)<span class="question-mark">?</span>;
+        df.sort_in_place(by_column, descending)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(df)
     }
 
@@ -5591,11 +5605,11 @@
     </span><span class="kw">pub fn </span>sort_with_options(<span class="kw-2">&amp;</span><span class="self">self</span>, by_column: <span class="kw-2">&amp;</span>str, options: SortOptions) -&gt; PolarsResult&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>df = <span class="self">self</span>.clone();
         <span class="kw">let </span>by_column = <span class="macro">vec!</span>[df.column(by_column)<span class="question-mark">?</span>.clone()];
-        <span class="kw">let </span>reverse = <span class="macro">vec!</span>[options.descending];
+        <span class="kw">let </span>descending = <span class="macro">vec!</span>[options.descending];
         df.columns = df
             .sort_impl(
                 by_column,
-                reverse,
+                descending,
                 options.nulls_last,
                 <span class="prelude-val">None</span>,
                 options.multithreaded,
