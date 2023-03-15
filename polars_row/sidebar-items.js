@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["convert_columns"],"macro":["with_match_arrow_primitive_type"],"struct":["SortField"],"type":["ArrayRef"]};
+window.SIDEBAR_ITEMS = {"macro":["with_match_arrow_primitive_type"],"mod":["encode"],"struct":["RowsEncoded","SortField"],"type":["ArrayRef"]};
