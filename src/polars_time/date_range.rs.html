@@ -85,57 +85,19 @@
 <a href="#85" id="85">85</a>
 <a href="#86" id="86">86</a>
 <a href="#87" id="87">87</a>
-<a href="#88" id="88">88</a>
-<a href="#89" id="89">89</a>
-<a href="#90" id="90">90</a>
-<a href="#91" id="91">91</a>
-<a href="#92" id="92">92</a>
-<a href="#93" id="93">93</a>
-<a href="#94" id="94">94</a>
-<a href="#95" id="95">95</a>
-<a href="#96" id="96">96</a>
-<a href="#97" id="97">97</a>
-<a href="#98" id="98">98</a>
-<a href="#99" id="99">99</a>
-<a href="#100" id="100">100</a>
-<a href="#101" id="101">101</a>
-<a href="#102" id="102">102</a>
-<a href="#103" id="103">103</a>
-<a href="#104" id="104">104</a>
-<a href="#105" id="105">105</a>
-<a href="#106" id="106">106</a>
 </pre><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>arrow::temporal_conversions::{
-    parse_offset, timestamp_ms_to_datetime, timestamp_ns_to_datetime, timestamp_us_to_datetime,
-};
-<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>chrono::TimeZone <span class="kw">as </span>TimeZoneTrait;
+</span><span class="kw">use </span>arrow::temporal_conversions::parse_offset;
 <span class="kw">use </span>chrono::{Datelike, NaiveDateTime};
 <span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>polars_core::series::IsSorted;
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span><span class="kw">crate</span>::windows::duration::localize_datetime;
+</span><span class="kw">use </span><span class="kw">crate</span>::utils::localize_timestamp;
 
 <span class="kw">pub fn </span>in_nanoseconds_window(ndt: <span class="kw-2">&amp;</span>NaiveDateTime) -&gt; bool {
     <span class="comment">// ~584 year around 1970
     </span>!(ndt.year() &gt; <span class="number">2554 </span>|| ndt.year() &lt; <span class="number">1386</span>)
-}
-
-<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">fn </span>localize_timestamp&lt;T: TimeZoneTrait&gt;(timestamp: i64, tu: TimeUnit, tz: T) -&gt; PolarsResult&lt;i64&gt; {
-    <span class="kw">match </span>tu {
-        TimeUnit::Nanoseconds =&gt; {
-            <span class="prelude-val">Ok</span>(localize_datetime(timestamp_ns_to_datetime(timestamp), <span class="kw-2">&amp;</span>tz)<span class="question-mark">?</span>.timestamp_nanos())
-        }
-        TimeUnit::Microseconds =&gt; {
-            <span class="prelude-val">Ok</span>(localize_datetime(timestamp_us_to_datetime(timestamp), <span class="kw-2">&amp;</span>tz)<span class="question-mark">?</span>.timestamp_micros())
-        }
-        TimeUnit::Milliseconds =&gt; {
-            <span class="prelude-val">Ok</span>(localize_datetime(timestamp_ms_to_datetime(timestamp), <span class="kw-2">&amp;</span>tz)<span class="question-mark">?</span>.timestamp_millis())
-        }
-    }
 }
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;private&quot;</span>)]

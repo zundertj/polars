@@ -2112,7 +2112,7 @@
     </span><span class="kw">fn </span>new_series_from_empty_structs() {
         <span class="kw">let </span>dtype = DataType::Struct(<span class="macro">vec!</span>[]);
         <span class="kw">let </span>empties = <span class="macro">vec!</span>[AnyValue::StructOwned(Box::new((<span class="macro">vec!</span>[], <span class="macro">vec!</span>[]))); <span class="number">3</span>];
-        <span class="kw">let </span>s = Series::from_any_values_and_dtype(<span class="string">&quot;&quot;</span>, <span class="kw-2">&amp;</span>empties, <span class="kw-2">&amp;</span>dtype).unwrap();
+        <span class="kw">let </span>s = Series::from_any_values_and_dtype(<span class="string">&quot;&quot;</span>, <span class="kw-2">&amp;</span>empties, <span class="kw-2">&amp;</span>dtype, <span class="bool-val">false</span>).unwrap();
         <span class="macro">assert_eq!</span>(s.len(), <span class="number">3</span>);
     }
     <span class="attr">#[test]

@@ -1224,7 +1224,7 @@
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;temporal&quot;</span>)]
 </span><span class="kw">fn </span>parse_dates(<span class="kw-2">mut </span>df: DataFrame, fixed_schema: <span class="kw-2">&amp;</span>Schema) -&gt; DataFrame {
-    <span class="kw">let </span>cols = std::mem::take(df.get_columns_mut())
+    <span class="kw">let </span>cols = <span class="kw">unsafe </span>{ std::mem::take(df.get_columns_mut()) }
         .into_par_iter()
         .map(|s| {
             <span class="kw">if let </span><span class="prelude-val">Ok</span>(ca) = s.utf8() {

@@ -926,7 +926,7 @@
             <span class="attr">#[cfg(feature = <span class="string">&quot;concat_str&quot;</span>)]
             </span>ConcatHorizontal(delimiter) =&gt; <span class="macro">map_as_slice!</span>(strings::concat_hor, <span class="kw-2">&amp;</span>delimiter),
             <span class="attr">#[cfg(feature = <span class="string">&quot;regex&quot;</span>)]
-            </span>Replace { all, literal } =&gt; <span class="macro">map_as_slice!</span>(strings::replace, literal, all),
+            </span>Replace { n, literal } =&gt; <span class="macro">map_as_slice!</span>(strings::replace, literal, n),
             Uppercase =&gt; <span class="macro">map!</span>(strings::uppercase),
             Lowercase =&gt; <span class="macro">map!</span>(strings::lowercase),
             Strip(matches) =&gt; <span class="macro">map!</span>(strings::strip, matches.as_deref()),

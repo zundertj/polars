@@ -199,6 +199,7 @@
 <a href="#199" id="199">199</a>
 <a href="#200" id="200">200</a>
 <a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
 </pre><pre class="rust"><code><span class="doccomment">//! macros that define kernels for extracting
 //! `week`, `weekday`, `year`, `hour` etc. from primitive arrays.
 </span><span class="kw">use </span>chrono::{Datelike, NaiveDate, NaiveDateTime, Timelike};
@@ -392,6 +393,7 @@
     i64,
     ArrowDataType::Int32
 );
+
 <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-datetime&quot;</span>)]
 </span><span class="macro">to_temporal_unit!</span>(
     datetime_to_iso_year_ms,
