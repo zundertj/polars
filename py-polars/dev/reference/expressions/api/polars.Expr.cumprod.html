@@ -394,7 +394,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../../api/polars.scan_delta.html">polars.scan_delta</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/polars.read_delta.html">polars.read_delta</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/polars.scan_pyarrow_dataset.html">polars.scan_pyarrow_dataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/polars.internals.batched.BatchedCsvReader.next_batches.html">polars.internals.batched.BatchedCsvReader.next_batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/polars.io.csv.batched_reader.BatchedCsvReader.next_batches.html">polars.io.csv.batched_reader.BatchedCsvReader.next_batches</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../series/index.html">Series</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -590,10 +590,12 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.filter.html">polars.Series.filter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.floor.html">polars.Series.floor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.head.html">polars.Series.head</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.hist.html">polars.Series.hist</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.interpolate.html">polars.Series.interpolate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.item.html">polars.Series.item</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.limit.html">polars.Series.limit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.new_from_index.html">polars.Series.new_from_index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.qcut.html">polars.Series.qcut</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.rechunk.html">polars.Series.rechunk</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.rename.html">polars.Series.rename</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.reshape.html">polars.Series.reshape</a></li>
@@ -677,6 +679,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.dt.epoch.html">polars.Series.dt.epoch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.dt.hour.html">polars.Series.dt.hour</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.dt.hours.html">polars.Series.dt.hours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.dt.is_leap_year.html">polars.Series.dt.is_leap_year</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.dt.iso_year.html">polars.Series.dt.iso_year</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.dt.max.html">polars.Series.dt.max</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.dt.mean.html">polars.Series.dt.mean</a></li>
@@ -825,6 +828,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../dataframe/api/polars.DataFrame.sort.html">polars.DataFrame.sort</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dataframe/api/polars.DataFrame.tail.html">polars.DataFrame.tail</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dataframe/api/polars.DataFrame.take_every.html">polars.DataFrame.take_every</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dataframe/api/polars.DataFrame.top_k.html">polars.DataFrame.top_k</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dataframe/api/polars.DataFrame.to_dummies.html">polars.DataFrame.to_dummies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dataframe/api/polars.DataFrame.to_series.html">polars.DataFrame.to_series</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../dataframe/api/polars.DataFrame.transpose.html">polars.DataFrame.transpose</a></li>
@@ -920,6 +924,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../lazyframe/api/polars.LazyFrame.sort.html">polars.LazyFrame.sort</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lazyframe/api/polars.LazyFrame.tail.html">polars.LazyFrame.tail</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lazyframe/api/polars.LazyFrame.take_every.html">polars.LazyFrame.take_every</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../lazyframe/api/polars.LazyFrame.top_k.html">polars.LazyFrame.top_k</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lazyframe/api/polars.LazyFrame.unique.html">polars.LazyFrame.unique</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lazyframe/api/polars.LazyFrame.unnest.html">polars.LazyFrame.unnest</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../lazyframe/api/polars.LazyFrame.update.html">polars.LazyFrame.update</a></li>
@@ -1189,6 +1194,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.limit.html">polars.Expr.limit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.lower_bound.html">polars.Expr.lower_bound</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.map_dict.html">polars.Expr.map_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Expr.pipe.html">polars.Expr.pipe</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.rechunk.html">polars.Expr.rechunk</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.reinterpret.html">polars.Expr.reinterpret</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.repeat_by.html">polars.Expr.repeat_by</a></li>
@@ -1272,6 +1278,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.dt.epoch.html">polars.Expr.dt.epoch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.dt.hour.html">polars.Expr.dt.hour</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.dt.hours.html">polars.Expr.dt.hours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Expr.dt.is_leap_year.html">polars.Expr.dt.is_leap_year</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.dt.iso_year.html">polars.Expr.dt.iso_year</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.dt.microsecond.html">polars.Expr.dt.microsecond</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.dt.microseconds.html">polars.Expr.dt.microseconds</a></li>
@@ -1492,7 +1499,7 @@ document.write(`
 <h1>polars.Expr.cumprod<a class="headerlink" href="#polars-expr-cumprod" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="polars.Expr.cumprod">
-<span class="sig-prename descclassname"><span class="pre">Expr.</span></span><span class="sig-name descname"><span class="pre">cumprod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference external" href="https://github.com/pola-rs/polars/blob/master/py-polars/polars/expr/expr.py#L1448-L1484"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polars.Expr.cumprod" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Expr.</span></span><span class="sig-name descname"><span class="pre">cumprod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference external" href="https://github.com/pola-rs/polars/blob/master/py-polars/polars/expr/expr.py#L1413-L1449"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polars.Expr.cumprod" title="Permalink to this definition">#</a></dt>
 <dd><p>Get an array with the cumulative product computed at every element.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

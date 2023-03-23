@@ -1307,6 +1307,8 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/dataframe/api/polars.DataFrame.height.html#polars.DataFrame.height">height (polars.DataFrame property)</a>
 </li>
+      <li><a href="reference/series/api/polars.Series.hist.html#polars.Series.hist">hist() (polars.Series method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.Expr.dt.hour.html#polars.Expr.dt.hour">hour() (polars.Expr.dt method)</a>
 
       <ul>
@@ -1393,18 +1395,24 @@ document.write(`
       </ul></li>
       <li><a href="reference/series/api/polars.Series.is_float.html#polars.Series.is_float">is_float() (polars.Series method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.is_in.html#polars.Expr.is_in">is_in() (polars.Expr method)</a>
 
       <ul>
         <li><a href="reference/series/api/polars.Series.is_in.html#polars.Series.is_in">(polars.Series method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.is_infinite.html#polars.Expr.is_infinite">is_infinite() (polars.Expr method)</a>
 
       <ul>
         <li><a href="reference/series/api/polars.Series.is_infinite.html#polars.Series.is_infinite">(polars.Series method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.dt.is_leap_year.html#polars.Expr.dt.is_leap_year">is_leap_year() (polars.Expr.dt method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.dt.is_leap_year.html#polars.Series.dt.is_leap_year">(polars.Series.dt method)</a>
 </li>
       </ul></li>
       <li><a href="reference/expressions/api/polars.Expr.is_nan.html#polars.Expr.is_nan">is_nan() (polars.Expr method)</a>
@@ -1845,7 +1853,7 @@ document.write(`
       </ul></li>
       <li><a href="reference/series/api/polars.Series.new_from_index.html#polars.Series.new_from_index">new_from_index() (polars.Series method)</a>
 </li>
-      <li><a href="reference/api/polars.internals.batched.BatchedCsvReader.next_batches.html#polars.internals.batched.BatchedCsvReader.next_batches">next_batches() (polars.internals.batched.BatchedCsvReader method)</a>
+      <li><a href="reference/api/polars.io.csv.batched_reader.BatchedCsvReader.next_batches.html#polars.io.csv.batched_reader.BatchedCsvReader.next_batches">next_batches() (polars.io.csv.batched_reader.BatchedCsvReader method)</a>
 </li>
       <li><a href="reference/api/polars.exceptions.NoDataError.html#polars.exceptions.NoDataError">NoDataError</a>
 </li>
@@ -1917,14 +1925,16 @@ document.write(`
 </li>
       <li><a href="reference/expressions/api/polars.pearson_corr.html#polars.pearson_corr">pearson_corr() (in module polars)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/dataframe/api/polars.DataFrame.pipe.html#polars.DataFrame.pipe">pipe() (polars.DataFrame method)</a>
 
       <ul>
+        <li><a href="reference/expressions/api/polars.Expr.pipe.html#polars.Expr.pipe">(polars.Expr method)</a>
+</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.pipe.html#polars.LazyFrame.pipe">(polars.LazyFrame method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/dataframe/api/polars.DataFrame.pivot.html#polars.DataFrame.pivot">pivot() (polars.DataFrame method)</a>
 </li>
       <li><a href="reference/expressions/api/polars.Expr.meta.pop.html#polars.Expr.meta.pop">pop() (polars.Expr.meta method)</a>
@@ -1949,6 +1959,8 @@ document.write(`
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/series/api/polars.Series.qcut.html#polars.Series.qcut">qcut() (polars.Series method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.quantile.html#polars.quantile">quantile() (in module polars)</a>
 
       <ul>
@@ -2667,9 +2679,13 @@ document.write(`
 </li>
       <li><a href="reference/api/polars.exceptions.TooManyRowsReturned.html#polars.exceptions.TooManyRowsReturned">TooManyRowsReturned</a>
 </li>
-      <li><a href="reference/expressions/api/polars.Expr.top_k.html#polars.Expr.top_k">top_k() (polars.Expr method)</a>
+      <li><a href="reference/dataframe/api/polars.DataFrame.top_k.html#polars.DataFrame.top_k">top_k() (polars.DataFrame method)</a>
 
       <ul>
+        <li><a href="reference/expressions/api/polars.Expr.top_k.html#polars.Expr.top_k">(polars.Expr method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.LazyFrame.top_k.html#polars.LazyFrame.top_k">(polars.LazyFrame method)</a>
+</li>
         <li><a href="reference/series/api/polars.Series.top_k.html#polars.Series.top_k">(polars.Series method)</a>
 </li>
       </ul></li>
