@@ -361,6 +361,18 @@
 <a href="#361" id="361">361</a>
 <a href="#362" id="362">362</a>
 <a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Implementations of the ChunkCast Trait.
 </span><span class="kw">use </span>std::convert::TryFrom;
 
@@ -542,7 +554,7 @@
 
 <span class="kw">impl </span>BinaryChunked {
     <span class="doccomment">/// # Safety
-    /// Utf8 is nto validated
+    /// Utf8 is not validated
     </span><span class="kw">pub unsafe fn </span>to_utf8(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Utf8Chunked {
         <span class="kw">let </span>chunks = <span class="self">self
             </span>.downcast_iter()
@@ -644,6 +656,10 @@
                             )
                         })
                     }
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-categorical&quot;</span>)]
+                    </span>(dt, Categorical(<span class="prelude-val">None</span>)) =&gt; {
+                        <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;cannot cast list inner type: &#39;{:?}&#39; to Categorical&quot;</span>, dt)
+                    }
                     <span class="kw">_ if </span>phys_child.is_primitive() =&gt; {
                         <span class="kw">let </span><span class="kw-2">mut </span>ca = <span class="kw">if </span>child_type.to_physical() != <span class="self">self</span>.inner_dtype().to_physical()
                         {
@@ -660,7 +676,15 @@
                     }
                     <span class="kw">_ </span>=&gt; {
                         <span class="kw">let </span>arr = cast_list(<span class="self">self</span>, child_type)<span class="question-mark">?</span>.<span class="number">0</span>;
-                        Series::try_from((<span class="self">self</span>.name(), arr))
+                        <span class="comment">// Safety: we just casted so the dtype matches.
+                        // we must take this path to correct for physical types.
+                        </span><span class="kw">unsafe </span>{
+                            <span class="prelude-val">Ok</span>(Series::from_chunks_and_dtype_unchecked(
+                                <span class="self">self</span>.name(),
+                                <span class="macro">vec!</span>[arr],
+                                data_type,
+                            ))
+                        }
                     }
                 }
             }

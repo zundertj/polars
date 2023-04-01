@@ -89,7 +89,7 @@
 /// - The left indices are placed at the location right points to.
 ///
 /// # Safety
-/// The caller must ensure that the right indexes fo `&amp;[(_, IdxSize)]` are integers ranging from `0..idx.len`
+/// The caller must ensure that the right indexes for `&amp;[(_, IdxSize)]` are integers ranging from `0..idx.len`
 </span><span class="attr">#[cfg(not(target_family = <span class="string">&quot;wasm&quot;</span>))]
 </span><span class="kw">pub unsafe fn </span>perfect_sort(pool: <span class="kw-2">&amp;</span>ThreadPool, idx: <span class="kw-2">&amp;</span>[(IdxSize, IdxSize)], out: <span class="kw-2">&amp;mut </span>Vec&lt;IdxSize&gt;) {
     <span class="kw">let </span>chunk_size = std::cmp::max(

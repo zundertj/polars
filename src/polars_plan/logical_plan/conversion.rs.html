@@ -1779,7 +1779,7 @@
     <span class="kw-2">mut </span>lp_arena: <span class="kw-2">&amp;</span>Arena&lt;ALogicalPlan&gt;,
 ) -&gt; LogicalPlan {
     <span class="comment">// we borrow again mutably only to make the types happy
-    // we want to intialize `to_lp` from a mutable and a immutable lp_arena
+    // we want to initialize `to_lp` from a mutable and a immutable lp_arena
     // by borrowing an immutable mutably, we still are immutable down the line.
     </span><span class="kw">let </span>alp = lp_arena.get(node).clone();
     alp.into_lp(

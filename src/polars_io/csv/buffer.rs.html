@@ -1014,7 +1014,7 @@
             <span class="bool-val">false </span>=&gt; {
                 <span class="kw">if </span><span class="macro">matches!</span>(<span class="self">self</span>.encoding, CsvEncoding::LossyUtf8) {
                     <span class="comment">// Safety:
-                    // we extended to data_len + n_writen
+                    // we extended to data_len + n_written
                     // so the bytes are initialized
                     </span><span class="macro">debug_assert!</span>(<span class="self">self</span>.data.capacity() &gt;= data_len + n_written);
                     <span class="kw">let </span>slice = <span class="kw">unsafe </span>{

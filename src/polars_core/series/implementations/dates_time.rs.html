@@ -654,8 +654,8 @@
             <span class="kw">fn </span>group_tuples(<span class="kw-2">&amp;</span><span class="self">self</span>, multithreaded: bool, sorted: bool) -&gt; PolarsResult&lt;GroupsProxy&gt; {
                 <span class="self">self</span>.<span class="number">0</span>.group_tuples(multithreaded, sorted)
             }
-            <span class="attr">#[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
-            </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>[Series], descending: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
+
+            <span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>[Series], descending: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
                 <span class="self">self</span>.<span class="number">0</span>.deref().arg_sort_multiple(by, descending)
             }
         }

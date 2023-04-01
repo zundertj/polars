@@ -289,7 +289,7 @@
     </span><span class="comment">// String: partition_name,
     // u32: index,
     // bool: flatten (we must run those first because they need a sorted group tuples.
-    //       if we cache the group tuples we must ensure we cast the sorted onces.
+    //       if we cache the group tuples we must ensure we cast the sorted ones.
     </span><span class="kw">let </span><span class="kw-2">mut </span>windows: Vec&lt;(String, Vec&lt;(u32, bool, Arc&lt;<span class="kw">dyn </span>PhysicalExpr&gt;)&gt;)&gt; = <span class="macro">vec!</span>[];
     <span class="kw">let </span><span class="kw-2">mut </span>other = Vec::with_capacity(exprs.len());
 

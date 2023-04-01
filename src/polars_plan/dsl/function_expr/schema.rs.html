@@ -289,6 +289,12 @@
 <a href="#289" id="289">289</a>
 <a href="#290" id="290">290</a>
 <a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
 </pre><pre class="rust"><code><span class="kw">use super</span>::<span class="kw-2">*</span>;
 
 <span class="kw">impl </span>FunctionExpr {
@@ -446,6 +452,12 @@
                     | Millisecond | Microsecond | Nanosecond | Second =&gt; DataType::UInt32,
                     TimeStamp(<span class="kw">_</span>) =&gt; DataType::Int64,
                     IsLeapYear =&gt; DataType::Boolean,
+                    Time =&gt; DataType::Time,
+                    Date =&gt; DataType::Date,
+                    Datetime =&gt; <span class="kw">match </span>same_type().unwrap().dtype {
+                        DataType::Datetime(tu, <span class="kw">_</span>) =&gt; DataType::Datetime(tu, <span class="prelude-val">None</span>),
+                        dtype =&gt; <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;expected Datetime, got {}&quot;</span>, dtype),
+                    },
                     Truncate(..) =&gt; same_type().unwrap().dtype,
                     Round(..) =&gt; same_type().unwrap().dtype,
                     <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]

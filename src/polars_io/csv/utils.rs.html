@@ -989,7 +989,7 @@
         .take(<span class="kw">match </span>max_read_rows {
             <span class="prelude-val">Some</span>(max_read_rows) =&gt; {
                 <span class="kw">if </span>max_read_rows &lt;= (usize::MAX - skip_rows_after_header) {
-                    <span class="comment">// read skip_rows_after_header more rows for infering
+                    <span class="comment">// read skip_rows_after_header more rows for inferring
                     // the correct schema as the first skip_rows_after_header
                     // rows will be skipped
                     </span>max_read_rows + skip_rows_after_header

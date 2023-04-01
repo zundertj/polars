@@ -454,7 +454,7 @@
     <span class="doccomment">/// Set the compression used. Defaults to `Lz4Raw`.
     ///
     /// The default compression `Lz4Raw` has very good performance, but may not yet been supported
-    /// by older readers. If you want more compatability guarantees, consider using `Snappy`.
+    /// by older readers. If you want more compatibility guarantees, consider using `Snappy`.
     </span><span class="kw">pub fn </span>with_compression(<span class="kw-2">mut </span><span class="self">self</span>, compression: ParquetCompression) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.compression = compression.into();
         <span class="self">self

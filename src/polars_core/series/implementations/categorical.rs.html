@@ -544,8 +544,7 @@
         <span class="self">self</span>.<span class="number">0</span>.logical().group_tuples(multithreaded, sorted)
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
-    </span><span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>[Series], descending: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
+    <span class="kw">fn </span>arg_sort_multiple(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>[Series], descending: <span class="kw-2">&amp;</span>[bool]) -&gt; PolarsResult&lt;IdxCa&gt; {
         <span class="self">self</span>.<span class="number">0</span>.arg_sort_multiple(by, descending)
     }
 }
@@ -788,7 +787,8 @@
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;mode&quot;</span>)]
     </span><span class="kw">fn </span>mode(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PolarsResult&lt;Series&gt; {
-        <span class="prelude-val">Ok</span>(CategoricalChunked::full_null(<span class="self">self</span>.<span class="number">0</span>.logical().name(), <span class="number">1</span>).into_series())
+        <span class="kw">let </span>cats = <span class="self">self</span>.<span class="number">0</span>.logical().mode()<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.finish_with_state(<span class="bool-val">false</span>, cats).into_series())
     }
 }
 

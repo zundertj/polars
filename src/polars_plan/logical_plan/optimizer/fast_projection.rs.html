@@ -193,7 +193,7 @@
                         },
                     }),
                     <span class="comment">// cleanup projections set in projection pushdown just above caches
-                    // they are nto needed.
+                    // they are not needed.
                     </span>cache_lp @ Cache { .. } =&gt; {
                         <span class="kw">if </span>cache_lp.schema(lp_arena).len() == columns.len() {
                             <span class="prelude-val">Some</span>(cache_lp.clone())

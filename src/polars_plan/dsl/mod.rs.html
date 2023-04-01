@@ -3444,7 +3444,7 @@
     </span><span class="doccomment">/// Get a mask of the first unique value.
     </span><span class="kw">pub fn </span>is_first(<span class="self">self</span>) -&gt; Expr {
         <span class="self">self</span>.apply(
-            |s| is_first(<span class="kw-2">&amp;</span>s).map(|s| <span class="prelude-val">Some</span>(s.into_series())),
+            |s| polars_ops::prelude::is_first(<span class="kw-2">&amp;</span>s).map(|s| <span class="prelude-val">Some</span>(s.into_series())),
             GetOutput::from_type(DataType::Boolean),
         )
         .with_fmt(<span class="string">&quot;is_first&quot;</span>)

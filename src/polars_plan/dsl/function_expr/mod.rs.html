@@ -500,6 +500,9 @@
 <a href="#500" id="500">500</a>
 <a href="#501" id="501">501</a>
 <a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
 </pre><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;arg_where&quot;</span>)]
 </span><span class="kw">mod </span>arg_where;
 <span class="kw">mod </span>binary;
@@ -971,6 +974,9 @@
             WeekDay =&gt; <span class="macro">map!</span>(datetime::weekday),
             Day =&gt; <span class="macro">map!</span>(datetime::day),
             OrdinalDay =&gt; <span class="macro">map!</span>(datetime::ordinal_day),
+            Time =&gt; <span class="macro">map!</span>(datetime::time),
+            Date =&gt; <span class="macro">map!</span>(datetime::date),
+            Datetime =&gt; <span class="macro">map!</span>(datetime::datetime),
             Hour =&gt; <span class="macro">map!</span>(datetime::hour),
             Minute =&gt; <span class="macro">map!</span>(datetime::minute),
             Second =&gt; <span class="macro">map!</span>(datetime::second),

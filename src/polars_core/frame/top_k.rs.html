@@ -71,6 +71,12 @@
 <a href="#71" id="71">71</a>
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::cmp::Ordering;
 
 <span class="kw">use </span>polars_error::PolarsResult;
@@ -136,10 +142,16 @@
             .enumerate_idx()
             .map(|(idx, bytes)| CompareRow { idx, bytes })
             .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-        <span class="kw">let </span>(lower, _el, _upper) = rows.select_nth_unstable(k);
-        lower.sort_unstable();
 
-        <span class="kw">let </span>idx: NoNull&lt;IdxCa&gt; = lower.iter().map(|cmp_row| cmp_row.idx).collect();
+        <span class="kw">let </span>sorted = <span class="kw">if </span>k &gt;= <span class="self">self</span>.height() {
+            <span class="kw-2">&amp;</span>rows
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>(lower, _el, _upper) = rows.select_nth_unstable(k);
+            lower.sort_unstable();
+            <span class="kw-2">&amp;*</span>lower
+        };
+
+        <span class="kw">let </span>idx: NoNull&lt;IdxCa&gt; = sorted.iter().map(|cmp_row| cmp_row.idx).collect();
 
         <span class="kw">unsafe </span>{ <span class="prelude-val">Ok</span>(<span class="self">self</span>.take_unchecked(<span class="kw-2">&amp;</span>idx.into_inner())) }
     }

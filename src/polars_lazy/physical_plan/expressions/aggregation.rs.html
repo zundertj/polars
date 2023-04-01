@@ -558,6 +558,16 @@
 <a href="#558" id="558">558</a>
 <a href="#559" id="559">559</a>
 <a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::sync::Arc;
 
@@ -608,41 +618,51 @@
         <span class="kw">let </span><span class="kw-2">mut </span>ac = <span class="self">self</span>.input.evaluate_on_groups(df, groups, state)<span class="question-mark">?</span>;
         <span class="comment">// don&#39;t change names by aggregations as is done in polars-core
         </span><span class="kw">let </span>keep_name = ac.series().name().to_string();
+        <span class="macro">polars_ensure!</span>(!<span class="macro">matches!</span>(ac.agg_state(), AggState::Literal(<span class="kw">_</span>)), ComputeError: <span class="string">&quot;cannot aggregate a literal&quot;</span>);
 
-        <span class="kw">let </span>check_flat = || {
-            <span class="macro">polars_ensure!</span>(
-                ac.null_propagated || !<span class="macro">matches!</span>(ac.agg_state(), AggState::AggregatedFlat(<span class="kw">_</span>)),
-                ComputeError: <span class="string">&quot;cannot aggregate as {}, the column is already aggregated&quot;
-            </span>);
-            <span class="prelude-val">Ok</span>(())
-        };
+        <span class="macro">macro_rules! </span>check_null_prop {
+            () =&gt; {
+                <span class="kw">match </span>ac.agg_state() {
+                    AggState::AggregatedFlat(<span class="kw">_</span>) =&gt; {
+                        <span class="kw">if </span>ac.null_propagated {
+                            <span class="kw">let </span>agg_s = ac.aggregated();
+                            <span class="kw">let </span>out = rename_series(agg_s, <span class="kw-2">&amp;</span>keep_name);
+                            <span class="kw">return </span><span class="prelude-val">Ok</span>(AggregationContext::new(out, Cow::Borrowed(groups), <span class="bool-val">true</span>))
+                        } <span class="kw">else </span>{
+                            <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;cannot aggregate as {}, the column is already aggregated&quot;</span>);
+                        }
+                    },
+                    <span class="kw">_ </span>=&gt; ()
+                }
+            }
+        }
 
         <span class="comment">// Safety:
         // groups must always be in bounds.
         </span><span class="kw">let </span>out = <span class="kw">unsafe </span>{
             <span class="kw">match </span><span class="self">self</span>.agg_type {
                 GroupByMethod::Min =&gt; {
-                    check_flat()<span class="question-mark">?</span>;
+                    <span class="macro">check_null_prop!</span>();
                     <span class="kw">let </span>agg_s = ac.flat_naive().into_owned().agg_min(ac.groups());
                     rename_series(agg_s, <span class="kw-2">&amp;</span>keep_name)
                 }
                 GroupByMethod::Max =&gt; {
-                    check_flat()<span class="question-mark">?</span>;
+                    <span class="macro">check_null_prop!</span>();
                     <span class="kw">let </span>agg_s = ac.flat_naive().into_owned().agg_max(ac.groups());
                     rename_series(agg_s, <span class="kw-2">&amp;</span>keep_name)
                 }
                 GroupByMethod::Median =&gt; {
-                    check_flat()<span class="question-mark">?</span>;
+                    <span class="macro">check_null_prop!</span>();
                     <span class="kw">let </span>agg_s = ac.flat_naive().into_owned().agg_median(ac.groups());
                     rename_series(agg_s, <span class="kw-2">&amp;</span>keep_name)
                 }
                 GroupByMethod::Mean =&gt; {
-                    check_flat()<span class="question-mark">?</span>;
+                    <span class="macro">check_null_prop!</span>();
                     <span class="kw">let </span>agg_s = ac.flat_naive().into_owned().agg_mean(ac.groups());
                     rename_series(agg_s, <span class="kw-2">&amp;</span>keep_name)
                 }
                 GroupByMethod::Sum =&gt; {
-                    check_flat()<span class="question-mark">?</span>;
+                    <span class="macro">check_null_prop!</span>();
                     <span class="kw">let </span>agg_s = ac.flat_naive().into_owned().agg_sum(ac.groups());
                     rename_series(agg_s, <span class="kw-2">&amp;</span>keep_name)
                 }
@@ -705,19 +725,19 @@
                     }
                 }
                 GroupByMethod::First =&gt; {
-                    check_flat()<span class="question-mark">?</span>;
+                    <span class="macro">check_null_prop!</span>();
                     <span class="kw">let </span><span class="kw-2">mut </span>agg_s = ac.flat_naive().into_owned().agg_first(ac.groups());
                     agg_s.rename(<span class="kw-2">&amp;</span>keep_name);
                     agg_s
                 }
                 GroupByMethod::Last =&gt; {
-                    check_flat()<span class="question-mark">?</span>;
+                    <span class="macro">check_null_prop!</span>();
                     <span class="kw">let </span><span class="kw-2">mut </span>agg_s = ac.flat_naive().into_owned().agg_last(ac.groups());
                     agg_s.rename(<span class="kw-2">&amp;</span>keep_name);
                     agg_s
                 }
                 GroupByMethod::NUnique =&gt; {
-                    check_flat()<span class="question-mark">?</span>;
+                    <span class="macro">check_null_prop!</span>();
                     <span class="kw">let </span>agg_s = ac.flat_naive().into_owned().agg_n_unique(ac.groups());
                     rename_series(agg_s, <span class="kw-2">&amp;</span>keep_name)
                 }
@@ -751,12 +771,12 @@
                     column.into_series()
                 }
                 GroupByMethod::Std(ddof) =&gt; {
-                    check_flat()<span class="question-mark">?</span>;
+                    <span class="macro">check_null_prop!</span>();
                     <span class="kw">let </span>agg_s = ac.flat_naive().into_owned().agg_std(ac.groups(), ddof);
                     rename_series(agg_s, <span class="kw-2">&amp;</span>keep_name)
                 }
                 GroupByMethod::Var(ddof) =&gt; {
-                    check_flat()<span class="question-mark">?</span>;
+                    <span class="macro">check_null_prop!</span>();
                     <span class="kw">let </span>agg_s = ac.flat_naive().into_owned().agg_var(ac.groups(), ddof);
                     rename_series(agg_s, <span class="kw-2">&amp;</span>keep_name)
                 }
@@ -767,7 +787,7 @@
                 GroupByMethod::NanMin =&gt; {
                     <span class="attr">#[cfg(feature = <span class="string">&quot;propagate_nans&quot;</span>)]
                     </span>{
-                        check_flat()<span class="question-mark">?</span>;
+                        <span class="macro">check_null_prop!</span>();
                         <span class="kw">let </span>agg_s = ac.flat_naive().into_owned();
                         <span class="kw">let </span>groups = ac.groups();
                         <span class="kw">let </span>agg_s = <span class="kw">if </span>agg_s.dtype().is_float() {
@@ -785,7 +805,7 @@
                 GroupByMethod::NanMax =&gt; {
                     <span class="attr">#[cfg(feature = <span class="string">&quot;propagate_nans&quot;</span>)]
                     </span>{
-                        check_flat()<span class="question-mark">?</span>;
+                        <span class="macro">check_null_prop!</span>();
                         <span class="kw">let </span>agg_s = ac.flat_naive().into_owned();
                         <span class="kw">let </span>groups = ac.groups();
                         <span class="kw">let </span>agg_s = <span class="kw">if </span>agg_s.dtype().is_float() {
@@ -860,7 +880,7 @@
                             <span class="kw">_ </span>=&gt; agg_s.cast(<span class="kw-2">&amp;</span>DataType::Float64).unwrap(),
                         };
                         <span class="kw">let </span><span class="kw-2">mut </span>count_s = series.agg_valid_count(groups);
-                        count_s.rename(<span class="string">&quot;count&quot;</span>);
+                        count_s.rename(<span class="string">&quot;__POLARS_COUNT&quot;</span>);
                         <span class="prelude-val">Ok</span>(StructChunked::new(<span class="kw-2">&amp;</span>new_name, <span class="kw-2">&amp;</span>[agg_s, count_s])
                             .unwrap()
                             .into_series())

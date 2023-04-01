@@ -437,7 +437,7 @@
     ///
     /// # Arguments
     /// - `null_on_oob`: Return a null when an index is out of bounds.
-    /// This behavior is more expensive than defaulting to returing an `Error`.
+    /// This behavior is more expensive than defaulting to returning an `Error`.
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;list_take&quot;</span>)]
     </span><span class="kw">pub fn </span>take(<span class="self">self</span>, index: Expr, null_on_oob: bool) -&gt; Expr {
         <span class="self">self</span>.<span class="number">0</span>.map_many_private(

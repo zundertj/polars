@@ -337,7 +337,7 @@
     }
 
     <span class="doccomment">/// Retrieve the indexes need to sort this and the other arrays.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
+
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>arg_sort_multiple(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         other: <span class="kw-2">&amp;</span>[Series],
@@ -402,7 +402,7 @@
     }
 
     <span class="attr">#[test]
-    #[cfg(feature = <span class="string">&quot;sort_multiple&quot;</span>)]
+
     </span><span class="kw">fn </span>test_cat_lexical_sort_multiple() -&gt; PolarsResult&lt;()&gt; {
         <span class="kw">let </span>init = <span class="kw-2">&amp;</span>[<span class="string">&quot;c&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;a&quot;</span>];
 

@@ -640,6 +640,15 @@
 <a href="#640" id="640">640</a>
 <a href="#641" id="641">641</a>
 <a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
 </pre><pre class="rust"><code><span class="kw">mod </span>keys;
 <span class="kw">mod </span>rename;
 <span class="kw">mod </span>utils;
@@ -995,32 +1004,41 @@
                 input,
                 options
             } =&gt; {
-                <span class="comment">// currently the distinct operation only keeps the first occurrences.
-                // this may have influence on the pushed down predicates. If the pushed down predicates
-                // contain a binary expression (thus depending on values in multiple columns)
-                // the final result may differ if it is pushed down.
 
-                </span><span class="kw">let </span><span class="kw-2">mut </span>root_count = <span class="number">0</span>;
+                <span class="kw">if </span><span class="macro">matches!</span>(options.keep_strategy, UniqueKeepStrategy::Any | UniqueKeepStrategy::None) {
+                    <span class="comment">// currently the distinct operation only keeps the first occurrences.
+                    // this may have influence on the pushed down predicates. If the pushed down predicates
+                    // contain a binary expression (thus depending on values in multiple columns)
+                    // the final result may differ if it is pushed down.
 
-                <span class="comment">// if this condition is called more than once, its a binary or ternary operation.
-                </span><span class="kw">let </span>condition = |<span class="kw">_</span>| {
-                    <span class="kw">if </span>root_count == <span class="number">0 </span>{
-                        root_count += <span class="number">1</span>;
-                        <span class="bool-val">false
-                    </span>} <span class="kw">else </span>{
-                        <span class="bool-val">true
-                    </span>}
-                };
-                <span class="kw">let </span><span class="kw-2">mut </span>local_predicates =
-                    transfer_to_local_by_name(expr_arena, <span class="kw-2">&amp;mut </span>acc_predicates, condition);
-                local_predicates.extend_from_slice(<span class="kw-2">&amp;</span>transfer_to_local_by_node(<span class="kw-2">&amp;mut </span>acc_predicates, |node| predicate_is_pushdown_boundary(node, expr_arena)));
+                    </span><span class="kw">let </span><span class="kw-2">mut </span>root_count = <span class="number">0</span>;
 
-                <span class="self">self</span>.pushdown_and_assign(input, acc_predicates, lp_arena, expr_arena)<span class="question-mark">?</span>;
-                <span class="kw">let </span>lp = Distinct {
-                    input,
-                    options
-                };
-                <span class="prelude-val">Ok</span>(<span class="self">self</span>.optional_apply_predicate(lp, local_predicates, lp_arena, expr_arena))
+                    <span class="comment">// if this condition is called more than once, its a binary or ternary operation.
+                    </span><span class="kw">let </span>condition = |<span class="kw">_</span>| {
+                        <span class="kw">if </span>root_count == <span class="number">0 </span>{
+                            root_count += <span class="number">1</span>;
+                            <span class="bool-val">false
+                        </span>} <span class="kw">else </span>{
+                            <span class="bool-val">true
+                        </span>}
+                    };
+                    <span class="kw">let </span><span class="kw-2">mut </span>local_predicates =
+                        transfer_to_local_by_name(expr_arena, <span class="kw-2">&amp;mut </span>acc_predicates, condition);
+                    local_predicates.extend_from_slice(<span class="kw-2">&amp;</span>transfer_to_local_by_node(<span class="kw-2">&amp;mut </span>acc_predicates, |node| predicate_is_pushdown_boundary(node, expr_arena)));
+
+                    <span class="self">self</span>.pushdown_and_assign(input, acc_predicates, lp_arena, expr_arena)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>lp = Distinct {
+                        input,
+                        options
+                    };
+                    <span class="prelude-val">Ok</span>(<span class="self">self</span>.optional_apply_predicate(lp, local_predicates, lp_arena, expr_arena))
+                } <span class="kw">else </span>{
+                    <span class="kw">let </span>lp = Distinct {
+                        input,
+                        options
+                    };
+                    <span class="self">self</span>.no_pushdown_restart_opt(lp, acc_predicates, lp_arena, expr_arena)
+                }
             }
             Join {
                 input_left,

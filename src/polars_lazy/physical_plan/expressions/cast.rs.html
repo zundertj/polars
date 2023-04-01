@@ -156,7 +156,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>ac = <span class="self">self</span>.input.evaluate_on_groups(df, groups, state)<span class="question-mark">?</span>;
 
         <span class="kw">match </span>ac.agg_state() {
-            <span class="comment">// this will not explode and potentially increase memory due ot overlapping groups
+            <span class="comment">// this will not explode and potentially increase memory due to overlapping groups
             </span>AggState::AggregatedList(s) =&gt; {
                 <span class="kw">let </span>ca = s.list().unwrap();
                 <span class="kw">let </span>casted = ca.apply_to_inner(<span class="kw-2">&amp;</span>|s| <span class="self">self</span>.finish(<span class="kw-2">&amp;</span>s))<span class="question-mark">?</span>;
